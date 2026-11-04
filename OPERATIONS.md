@@ -1,16 +1,19 @@
 # Operations
 
-## Safe use
-- use synthetic/non-sensitive test data where possible
-- keep model/runtime experiments isolated
-- record dependency versions for reproducibility
+## Current status
 
-## Before reusing code in Butler
-- run tests
-- inspect secrets/config
-- inspect persistence
-- remove hard-coded paths
-- add auth/audit hooks as required
+Experimental local application, with the defects listed in [the audit](docs/REPOSITORY_AUDIT.md). Repository automation is available; model-backed runtime has not been verified. Follow [SETUP.md](SETUP.md) for the recovered behavior and [testing guidance](docs/TESTING.md) for evidence requirements.
 
-## Archival
-Tag known-good experimental milestones before major rewrites.
+## Routine development
+
+Pull with `git pull --ff-only` on a clean branch. Run lightweight repository checks. Work through one feature spec and use synthetic data. Keep Flask local; do not expose its current debug server. CI never needs private personalities, conversations or real models.
+
+## Backups and recovery
+
+GitHub restores tracked source, shared tooling and specifications only. Back up private assets and histories separately, preferably with a second copy of irreplaceable data. Preserve model-folder structure and verify SSD copies before deleting internal files. Neither Spec Kit nor Git provides a backup of ignored files.
+
+No automated migration/reset/cleanup of old memories is authorized by this foundation. Until M2 defines a recovery policy, preserve corrupted files for private repair and avoid overwriting them. Future M1 atomic writes must reduce interruption risk without claiming full transactional or multi-user storage.
+
+## Releases and reuse
+
+Do not tag a working release solely because documentation/CI passes. Complete its acceptance gates, a model-backed smoke test and backup/restore evidence first. Before extracting code for Butler, review dependencies, storage, authentication, audit and permissions independently. No public deployment, hosting or automatic model download is configured.
