@@ -16,6 +16,8 @@ Previous/known Incanta work used or explored:
 - ComfyUI integration/experiments
 - Apple Silicon/local workstation execution
 
+The recovered source currently uses Flask and plain JavaScript. FastAPI, React and live ComfyUI integration remain earlier directions rather than implemented features in this snapshot.
+
 ## Strategic role now
 
 Incanta should be treated as:

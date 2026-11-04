@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Incanta - Chat with Celeste</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Incanta</h1>
+      <h2>Chat with Celeste</h2>
+      <div id="emotion-label">Current Emotion: Neutral</div>
+    </header>
+
+    <section id="chat-messages" class="chat-box"></section>
+
+    <form id="chat-form">
+      <input type="text" id="chat-input" placeholder="Say something to Celeste..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+
+    <button id="toggle-gauges" onclick="toggleGauges()">Hide Gauges</button>
+    <div id="gauge-container">
+      <div class="gauge"><div class="gauge-fill" id="gauge-Trust">Trust: 0</div></div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-Intimacy">Intimacy: 0</div></div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-Curiosity">Curiosity: 0</div></div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-Affection">Affection: 0</div></div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-Confidence">Confidence: 0</div></div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-Confusion">Confusion: 0</div></div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-Arousal">Arousal: 0</div></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
