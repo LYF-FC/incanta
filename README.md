@@ -33,4 +33,4 @@ Use only locally with synthetic data until these issues are addressed.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Never commit private memories, personality definitions, credentials, models or generated media, even to this private repository. The ignore rules are a safeguard; review staged contents before every commit.
 
-The first source import continues the repository's existing documentation history. Other local project variants have not been merged. No redistribution license has been granted by this setup.
+The first source import continues the repository's existing documentation history. Other local project variants have been compared but not merged; see [the source recovery audit](docs/SOURCE_RECOVERY.md) for retention recommendations. No redistribution license has been granted by this setup.
