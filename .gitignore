@@ -90,3 +90,22 @@ logs/
 .idea/
 .vscode/
 node_modules/
+
+# Shared Spec Kit metadata: exact exceptions only; private JSON stays ignored.
+!/.specify/init-options.json
+!/.specify/integration.json
+!/.specify/integrations/codex.manifest.json
+!/.specify/integrations/speckit.manifest.json
+!/.specify/workflows/workflow-registry.json
+!/.specify/memory/
+/.specify/memory/*
+!/.specify/memory/constitution.md
+!/.specify/memory/.constitution-template.json
+# Commit only installed Codex skill instructions, never local agent state.
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/speckit-*/
+/.agents/skills/speckit-*/*
+!/.agents/skills/speckit-*/SKILL.md
+/.codex/

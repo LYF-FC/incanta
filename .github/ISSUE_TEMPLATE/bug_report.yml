@@ -1,0 +1,31 @@
+name: Bug report
+description: Report reproducible behavior with synthetic data only.
+title: '[Bug] '
+body:
+  - type: markdown
+    attributes:
+      value: Do not include private conversations, character definitions, paths, credentials or model files. Report security concerns privately as described in SECURITY.md.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: State the visible problem and the feature/spec it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Use synthetic input and omit private data.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Non-sensitive environment
+      description: Commit, OS, Python version, and model identifier if relevant; no full private paths or content.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Evidence and workaround
+      description: Sanitized error category, check result, and any workaround. Do not attach private logs.

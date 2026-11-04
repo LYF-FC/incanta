@@ -1,71 +1,25 @@
-# Incanta - Canonical Project Context
+# Incanta project context
 
-## Purpose
+## Purpose and current direction
 
-Incanta is an earlier private/local AI assistant prototype in the family project portfolio. It predates the Butler architecture and is now primarily useful as a technical reference, experimentation environment and source of reusable components.
+Incanta is a private, local AI character/conversation prototype. On 2026-11-04, the owner requested structured active development after source recovery. The repository now supports that restart through Spec Kit, documented priorities and reviewable changes.
 
-Incanta should not silently evolve into a second production Butler. Butler is the strategic family-assistant platform.
+The latest recovered source came from `Documents/Projects/Incanta`. Older variants and ZIPs remain unchanged; see [source recovery](docs/SOURCE_RECOVERY.md). They are references, not interchangeable releases.
 
-## Known architecture direction
+## Product boundary
 
-Previous/known Incanta work used or explored:
-- local model inference
-- FastAPI backend
-- React frontend
-- llama.cpp/local inference
-- ComfyUI integration/experiments
-- Apple Silicon/local workstation execution
+Incanta develops character interaction, emotional state, memory and optional visuals. Butler remains the separate strategic production family-assistant platform. No production household data or service should depend on this experimental app. Components may be reused only after their own security, dependency and persistence review.
 
-The recovered source currently uses Flask and plain JavaScript. FastAPI, React and live ComfyUI integration remain earlier directions rather than implemented features in this snapshot.
+## Evidence over old plans
 
-## Strategic role now
+The current implementation is Flask plus plain JavaScript and `llama-cpp-python`. It is not React/FastAPI, and image metadata is not a working ComfyUI adapter. Python 3.13.5 was recorded by the recovered environment; no tested runtime support range has yet been established for the app. Repository tooling targets Python 3.11 and 3.13.
 
-Incanta should be treated as:
-- prototype/reference project
-- sandbox for local-AI experiments
-- source of reusable components/patterns
-- possible archive once useful parts are extracted
+## Source of truth
 
-Potentially reusable:
-- FastAPI service patterns
-- React components
-- inference wrappers
-- prompt/agent experiments
-- ComfyUI orchestration
-- Apple Silicon deployment lessons
+- [Constitution](.specify/memory/constitution.md): project principles.
+- [Roadmap](ROADMAP.md): sequence and milestone gates.
+- `specs/<number>-<feature>/`: feature requirements, decisions, tasks and verification.
+- [Audit](docs/REPOSITORY_AUDIT.md): current limitations and evidence.
+- [Decisions](DECISIONS.md): durable architectural/governance choices.
 
-## Privacy
-
-Original intent was private/local AI processing.
-
-Continue to avoid:
-- sending private family context to external model services by default
-- storing production Butler data in ad-hoc Incanta stores
-- treating prototype security as production-ready
-
-## Relationship to Butler
-
-Butler supersedes Incanta as the production family AI platform.
-
-Any reuse should:
-- inspect actual current code
-- identify dependencies
-- remove stale assumptions
-- align with Butler auth/audit/permissions
-- avoid copying persistence designs blindly
-
-## Hardware context
-
-Relevant systems:
-- MacBook Pro M2, 16 GB
-- Mac Pro 2013, 64 GB
-- future dedicated Butler host in Nice
-
-Incanta was oriented toward workstation/local execution rather than Synology-hosted inference.
-
-## Current status
-
-- older prototype
-- not chosen as production architecture
-- repo exists to preserve/review useful work
-- should be audited before new development
+Private character definitions, conversation history, models and generated assets remain local. Public or private repository status does not change that rule.

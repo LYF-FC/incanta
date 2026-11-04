@@ -1,5 +1,7 @@
 # Setup
 
+For repository planning/tooling only, use [the development guide](docs/DEVELOPMENT.md); no model or application environment is required. The application instructions below describe the recovered, unverified runtime. Specification 001 plans configuration/startup changes but has not implemented them yet.
+
 ## Environment
 
 Recovered from a macOS Python 3.13.5 environment. Create a new environment rather than moving or committing the original one. Run all commands from the repository root.
@@ -45,4 +47,4 @@ git diff --cached --stat
 
 The check scans staged blobs, or tracked blobs when invoked with `--tracked`, for forbidden paths, large files, common credential patterns and Python syntax errors. It does not import the app or load any model. It is a limited guard, not a guarantee that arbitrary prose contains no private information.
 
-Read the known issues in [README.md](README.md) before attempting an application smoke test. A full model-backed run remains unverified.
+Read the findings in [the repository audit](docs/REPOSITORY_AUDIT.md) before attempting an application smoke test. A full model-backed run remains unverified.
