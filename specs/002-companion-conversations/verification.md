@@ -1,6 +1,6 @@
 # Feature 002 verification
 
-**Date:** 2026-11-17. **Status:** implementation and automated/browser/short-native checks passed; owner-reviewed 30-minute acceptance and reviewed delivery remain pending.
+**Date:** 2026-11-17. **Status:** implementation and automated/browser/short-native checks passed; owner-reviewed 30-minute acceptance remains pending in issue #9; reviewed delivery completed through PR #8.
 
 ## Delivery and workflow
 
@@ -66,3 +66,9 @@ Review found and corrected three independent edge cases, traced as T024–T026:
 Each new regression failed before its correction. Final local suites pass **49 Python tests on both 3.11 and 3.13**, plus **12 Node tests**; JavaScript/shell syntax and staged privacy/whitespace checks remain required before commit. A synthetic browser with delayed chat loading visibly disabled the input/Send control, then displayed the new chat with an empty draft and usable Send. No native model was loaded or downloaded during this issue/CI review. The earlier short native evidence is retained; owner-reviewed 30-minute acceptance remains pending.
 
 The five milestone issues are not all completed merely because planning artifacts exist. M1 is delivered through merged PR #7 and issue #1 is closed. M3 mechanical criteria depend on accepted PR #8 delivery; the distinct 30-minute dialogue-quality gate is explicitly tracked in issue #9. M2 still needs proactive dialogue/export/recovery scope, M4 needs actual rendering, and M5 needs release/backup-restore acceptance. PR #8 remains under review until its correction commit has green CI; owner authorization permits merge when that condition holds.
+
+## Final reviewed delivery
+
+The owner explicitly authorized review/comment/merge after green CI. PR #7 merged as `a52cf54a50837898b3606c8e059732163b10d9db`. PR #8 was retargeted to main, review corrections were committed as `6f955c2659ac43ef76192520bfb45c5953e361c4`, and [workflow 44177431802](https://github.com/LYF-FC/incanta/actions/runs/44177431802) passed all three jobs (Python 3.11, Python 3.13 and JavaScript) for that exact head. A review was recorded and PR #8 merged as `9d534332c3978cc561e797757e693be04ac433c6`. T023 is complete. Earlier pending-delivery/CI paragraphs preserve the chronology rather than describe the final state.
+
+Issues #1 and #3 are closed for their original completed mechanical scope. Owner dialogue-quality acceptance remains explicitly open in #9 (same M3 milestone), so T022/SC-005 is not checked or claimed accepted. The remaining implementation milestones #2/#4/#5 were updated to link their existing specifications and actual unfinished work. No planned feature was closed merely because its documentation exists. M1's completed milestone was closed; no release tag was created.

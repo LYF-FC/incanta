@@ -1,6 +1,6 @@
 # Tasks: Celeste conversations and controlled memory
 
-**Date:** 2026-11-17. **Status:** implementation/automated/browser/short-native verification complete; T022 owner acceptance and T023 reviewed delivery remain open. See [verification.md](verification.md).
+**Date:** 2026-11-17. **Status:** implementation/automated/browser/short-native verification complete; T022 owner acceptance remains open in issue #9; reviewed delivery completed through merged PR #8. See [verification.md](verification.md).
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [data model](data-model.md), contracts and [validation](quickstart.md). Tests are explicitly required by the spec; add regression tests before implementation and verify they fail for the missing behavior.
 
@@ -57,7 +57,7 @@ Prove preservation before enabling any owner-selected private import.
 - [X] T020 Implement preview token, checksum-idempotent transactional import and local original preservation in backend/legacy_import.py and frontend_app.py; no auto-scanning or destructive rewrite. (FR-009, FR-010)
 - [X] T021 Exercise wrong-origin/CSRF, corrupt/read-only DB, concurrent/repeated requests and settings edit during generation in tests/test_conversations.py; run all Python and Node suites. (FR-004, FR-008, FR-010, FR-011, SC-001, SC-002)
 - [ ] T022 Run quickstart.md browser and explicit native 30-minute/restart journey; record owner verdict/timing without content in specs/002-companion-conversations/verification.md. (FR-011, SC-001, SC-005)
-- [ ] T023 Update ARCHITECTURE.md, SETUP.md and docs/ASSETS.md; perform staged privacy/checks and reviewed PR delivery, recording failures in specs/002-companion-conversations/verification.md. (FR-009, FR-010, FR-011)
+- [X] T023 Update ARCHITECTURE.md, SETUP.md and docs/ASSETS.md; perform staged privacy/checks and reviewed PR delivery, recording failures in specs/002-companion-conversations/verification.md. (FR-009, FR-010, FR-011)
 
 ## PR review follow-up — 2026-11-17
 
@@ -77,7 +77,7 @@ Where marked [P], distinct test files in the same phase may be authored together
 
 ## Implementation Strategy
 
-Deliver and verify US1 as the first increment, then each remaining story. This is an incremental demonstration, not the complete owner MVP. Native quality/notification/combined release gates remain mandatory. Review settings defaults with their visible controls, preserve private data and record actual outcomes in verification.md. Do not check tasks merely because their design exists. T022 has browser and short native evidence but remains unchecked until the owner-reviewed 30-minute criterion passes. T023 has documentation/checks/PR preparation but remains unchecked until reviewed delivery is complete.
+Deliver and verify US1 as the first increment, then each remaining story. This is an incremental demonstration, not the complete owner MVP. Native quality/notification/combined release gates remain mandatory. Review settings defaults with their visible controls, preserve private data and record actual outcomes in verification.md. Do not check tasks merely because their design exists. T022 has browser and short native evidence but remains unchecked until the owner-reviewed 30-minute criterion passes. T023 completed with reviewed PR #8 delivery after green hosted CI; issue #9 retains the separate owner verdict.
 
 ## Requirement and outcome coverage
 

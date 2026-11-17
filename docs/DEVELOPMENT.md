@@ -24,7 +24,7 @@ The Git extension creates numbered feature branches. Core specs live under `spec
 
 ## Resume the first feature
 
-Specification `001-reliable-local-chat` was hand-seeded from the installed upstream templates during bootstrap. Implementation is present on its existing branch. Read its tasks and verification record: automated, synthetic browser and explicit native-model/process-restart checks pass; reviewed delivery remains pending.
+Specification `001-reliable-local-chat` was hand-seeded from the installed upstream templates during bootstrap. Implementation is present on its existing branch. Read its tasks and verification record: automated, synthetic browser and explicit native-model/process-restart checks pass; hosted CI/review passed and PR #7 merged.
 
 ```sh
 git switch 001-reliable-local-chat

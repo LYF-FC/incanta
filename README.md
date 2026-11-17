@@ -2,7 +2,7 @@
 
 A private, local AI character and conversation project. Incanta combines a local language model, emotional state and persistent memory. Development is restarting from recovered source, with specifications and small, verifiable changes.
 
-**Status:** M1 and MVP plans are delivered in [merged PR #7](https://github.com/LYF-FC/incanta/pull/7). Feature 002 conversation/memory implementation passes automated, synthetic-browser and short native checks; owner-reviewed 30-minute acceptance is tracked in [issue #9](https://github.com/LYF-FC/incanta/issues/9); PR #8 awaits its correction commit’s CI/review. See [verification 002](specs/002-companion-conversations/verification.md) and the [M1 record](specs/001-reliable-local-chat/verification.md).
+**Status:** M1/MVP plans and the companion conversation/memory code are delivered in merged [PR #7](https://github.com/LYF-FC/incanta/pull/7) and [PR #8](https://github.com/LYF-FC/incanta/pull/8), with hosted CI green before merge. The 30-minute owner dialogue assessment remains open in [issue #9](https://github.com/LYF-FC/incanta/issues/9). See [verification 002](specs/002-companion-conversations/verification.md) for the exact scope and remaining acceptance.
 
 ## Start here
 

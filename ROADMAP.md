@@ -2,14 +2,14 @@
 
 Updated 2026-11-17. Priorities are ordered by dependency, not calendar promises. This roadmap covers Incanta as a local character/conversation project, with Butler remaining a separate production platform.
 
-**Current focus:** finish PR #8 correction review/CI after merged M1 PR #7; complete owner-reviewed dialogue acceptance. M0/CI do not make the app production-ready.
+**Current focus:** complete owner dialogue acceptance (#9) after merged M1/002 PRs #7/#8; proceed through planned local visuals/proactive/release work. M0/CI do not make the app production-ready.
 
 | Milestone | Status | Outcome | Exit gate |
 | --- | --- | --- | --- |
 | M0 — Development foundation | Complete | Recovered source, audit, Spec Kit, documentation, CI and contribution workflow | Repository checks pass and first implementation has a coherent specification/plan/task list |
 | M1 — Reliable local chat | Complete; merged PR #7, issue #1 closed | Predictable startup, working status/chat UI, one memory event per successful turn, meaningful emotions | All [001 acceptance criteria](specs/001-reliable-local-chat/spec.md) pass with a fake inference adapter; one documented manual local-model smoke test passes |
 | M2 — Memory and proactive dialogue | Memory controls implemented for review in 002; proactive work still planned | Relevant callbacks, natural follow-ups, explicit memory controls | Synthetic retrieval tests, callback provenance, no fabricated memories, inspect/delete/export and no background messages by default |
-| M3 — Personality and session coherence | Implemented for review in 002; owner acceptance pending | Validated character configuration and isolated sessions | Character values affect prompts; invalid configuration is handled; two test sessions cannot leak history or state |
+| M3 — Personality and session coherence | Mechanical scope delivered in PR #8; owner dialogue acceptance #9 pending | Validated character configuration and isolated sessions | Character values affect prompts; invalid configuration is handled; two test sessions cannot leak history or state |
 | M4 — Optional visuals | Planned; depends on M1 and M3 | Optional local ComfyUI adapter and expression-aware display | Chat remains usable with visuals off/unavailable; private output stays local; adapter contract and fake integration tests pass |
 | M5 — Reproducible local release | Planned; depends on selected M2–M4 scope | Documented, repeatable Mac setup and tested backup/restore | Fresh-machine setup, external-SSD model path, dependency review and restore rehearsal documented before tagging a release |
 
@@ -53,7 +53,7 @@ Product scope is sufficiently defined to author the subsequent feature specifica
 
 ### Spec Kit MVP implementation backlog
 
-Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 has 24 completed implementation/review-fix tasks and two open acceptance/delivery tasks; the 60 tasks in 003–005 remain unchecked. Planning is complete. Feature 002 is implemented for review with owner acceptance pending; 003–005 remain planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
+Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 has 25 completed implementation/review/delivery tasks and one open owner-acceptance task; the 60 tasks in 003–005 remain unchecked. Planning is complete. Feature 002 is delivered with owner acceptance pending; 003–005 remain planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
 
 | Order | Feature | Deliverable | Tasks | Dependency |
 | --- | --- | --- | --- | --- |
@@ -110,3 +110,7 @@ GitHub-hosted jobs for PR #7 could not start due to an account billing/spending-
 ## PR/CI review follow-up — 2026-11-17
 
 The owner changed the GitHub repository to public. The original billing-blocked PR #7/#8 runs both passed on rerun attempt 2. New commits still require their own checks. Review of 002 added three corrected regressions: pending/failed chat selection cannot redirect a send, failed first database initialization remains retryable without resetting existing data, and malformed stored state returns an unreadable-history error before inference. Local totals are 49 Python tests (3.11/3.13) and 12 frontend tests. No native model was used for this review. M1 is ready for review/merge and issue #1 closure on merge; the other milestone issues retain their actual remaining gates.
+
+## Final review outcome — 2026-11-17
+
+PR #7 and corrected PR #8 were reviewed and merged after their required hosted checks passed. M1 issue #1 and the original M3 mechanical-scope issue #3 are closed; M1's milestone is closed. The separate owner-reviewed 30-minute conversation/restart assessment remains issue #9 and feature 002 T022, keeping the M3 acceptance milestone open. Feature 002 T023 (reviewed delivery) is complete. Issues #2/#4/#5 remain open for their unbuilt scope. Final regression totals are 49 Python tests and 12 frontend tests; no native inference was invoked during issue/CI review.

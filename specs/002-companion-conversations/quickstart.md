@@ -1,6 +1,6 @@
 # Validation quickstart
 
-Implemented validation guide; actual results and remaining owner acceptance are in [verification.md](verification.md). M1 verification passed and PR #7 is open; the owner authorized stacked implementation before merge. Prerequisites: Python 3.11/3.13 lightweight dependencies and Node. No native packages/models for automated tests.
+Implemented validation guide; actual results and remaining owner acceptance are in [verification.md](verification.md). M1 PR #7 and companion PR #8 are merged after green checks; owner dialogue-quality acceptance remains open in issue #9. Prerequisites: Python 3.11/3.13 lightweight dependencies and Node. No native packages/models for automated tests.
 
 1. Run `python3 -m unittest discover -s tests -v` and `node --test tests/conversations.test.js` with the existing tests. Run `node --test tests/*.test.js` for all frontend regressions.
 2. Use a temporary database/fake adapter, create A and B with different settings, send ten turns, restart the process twice. Expect exact transcript/state restoration, settings in each captured prompt and no leakage.

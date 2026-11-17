@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-17
 
-**Status**: Implemented for review on its existing branch, stacked on verified M1 PR #7 at the owner's request. Automated/browser/short-native checks pass; owner-reviewed 30-minute acceptance and reviewed delivery remain pending. See [verification.md](verification.md).
+**Status**: Delivered through merged PR #8 after hosted CI/review, on M1 delivered through PR #7. Owner-reviewed 30-minute acceptance remains open in [issue #9](https://github.com/LYF-FC/incanta/issues/9). See [verification.md](verification.md).
 
 ## User Scenarios & Testing *(mandatory)*
 
