@@ -59,6 +59,14 @@ Prove preservation before enabling any owner-selected private import.
 - [ ] T022 Run quickstart.md browser and explicit native 30-minute/restart journey; record owner verdict/timing without content in specs/002-companion-conversations/verification.md. (FR-011, SC-001, SC-005)
 - [ ] T023 Update ARCHITECTURE.md, SETUP.md and docs/ASSETS.md; perform staged privacy/checks and reviewed PR delivery, recording failures in specs/002-companion-conversations/verification.md. (FR-009, FR-010, FR-011)
 
+## PR review follow-up — 2026-11-17
+
+The owner requested review of open issues/PRs and CI failures. These corrections refine the existing requirements without expanding MVP scope.
+
+- [X] T024 Reproduce and fix in-flight/failed conversation selection in frontend/conversation_helpers.js and frontend/app.js; block Send while loading, preserve the last loaded chat on failure and clear drafts when changing chats; verify tests/conversations.test.js and the synthetic browser journey. (FR-001, FR-003, FR-004, FR-011, SC-001)
+- [X] T025 Reproduce and fix failed first-schema initialization in backend/conversation_store.py; remove only the new failed file identified by this initialization call, preserve existing/replaced files, and verify retry/original preservation in tests/test_conversations.py. (FR-002, FR-004, FR-010, FR-011, SC-002)
+- [X] T026 Validate persisted gauge/emotion state before conversation/turn reads in backend/conversation_store.py; return history_unreadable without inference or mutation on malformed state; verify tests/test_conversations.py. (FR-002, FR-010, FR-011, SC-001, SC-002)
+
 ## Dependencies & Execution Order
 
 Setup → foundation → US1 → remaining stories in their listed order → cross-cutting verification. Tasks touching the same runtime, schema or UI file run sequentially. Each story checkpoint is validated before proceeding. External feature dependencies are named in plan.md; use fake adapters to test boundaries before native acceptance. No native downloads/inference occur in automated checks.
@@ -75,19 +83,19 @@ Deliver and verify US1 as the first increment, then each remaining story. This i
 
 | Requirement/outcome | Tasks |
 | --- | --- |
-| FR-001 | T006, T007, T009, T010, T011 |
-| FR-002 | T002, T004, T006, T007, T009, T010, T011 |
-| FR-003 | T006, T008, T011, T014 |
-| FR-004 | T002, T003, T004, T005, T007, T009, T021 |
+| FR-001 | T006, T007, T009, T010, T011, T024 |
+| FR-002 | T002, T004, T006, T007, T009, T010, T011, T025, T026 |
+| FR-003 | T006, T008, T011, T014, T024 |
+| FR-004 | T002, T003, T004, T005, T007, T009, T021, T024, T025 |
 | FR-005 | T012, T013, T014, T015 |
 | FR-006 | T016, T017, T018 |
 | FR-007 | T012, T013, T014, T015, T016, T017, T018 |
 | FR-008 | T003, T004, T008, T012, T013, T015, T016, T017, T021 |
 | FR-009 | T001, T019, T020, T023 |
-| FR-010 | T001, T002, T005, T020, T021, T023 |
-| FR-011 | T003, T006, T010, T012, T016, T019, T021, T022, T023 |
-| SC-001 | T006, T021, T022 |
-| SC-002 | T003, T021 |
+| FR-010 | T001, T002, T005, T020, T021, T023, T025, T026 |
+| FR-011 | T003, T006, T010, T012, T016, T019, T021, T022, T023, T024, T025, T026 |
+| SC-001 | T006, T021, T022, T024, T026 |
+| SC-002 | T003, T021, T025, T026 |
 | SC-003 | T012, T016 |
 | SC-004 | T019 |
 | SC-005 | T022 |

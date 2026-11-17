@@ -2,7 +2,7 @@
 
 **Branch**: `codex/002-companion-conversations` | **Date**: 2026-11-17 | **Spec**: [spec.md](spec.md)
 
-**Status:** implemented for review. Dependencies: verified [001](../001-reliable-local-chat/verification.md), with its PR review still open. The owner explicitly authorized stacked implementation. See [verification](verification.md) for actual evidence and pending owner acceptance.
+**Status:** implemented for review. Dependencies: verified [001](../001-reliable-local-chat/verification.md), delivered through merged PR #7. The owner explicitly authorized stacked implementation and subsequent green-CI review/merge. See [verification](verification.md) for actual evidence and pending owner acceptance.
 
 ## Summary
 

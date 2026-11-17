@@ -138,3 +138,31 @@ class ConversationTests(CompanionCase):
         captured=json.dumps(self.fake.prompts[-1])
         self.assertNotIn('Old synthetic turn 0',captured)
         self.assertIn('Old synthetic turn 11',captured)
+
+    def test_failed_first_schema_setup_is_retryable_without_resetting_existing_file(self):
+        store=self.app.extensions['incanta'].store
+        # Failure can occur after SQLite already allocated its new file/pages.
+        with patch('backend.conversation_store.Path.read_text',side_effect=OSError('synthetic schema read failure')):
+            result=self.call('POST','/api/conversations',SETUP)
+            self.assertEqual(result.status_code,500)
+        self.assertFalse(self.settings.database_path.exists())
+        self.assertEqual(self.call('POST','/api/conversations',SETUP).status_code,201)
+        self.restart()
+        original=b'pre-existing unreadable synthetic state'
+        self.settings.database_path.write_bytes(original)
+        self.assertEqual(self.call('POST','/api/conversations',SETUP).status_code,500)
+        self.assertEqual(self.settings.database_path.read_bytes(),original)
+
+    def test_invalid_persisted_gauges_are_reported_as_unreadable_history(self):
+        a=self.create()
+        store=self.app.extensions['incanta'].store
+        for encoded in ['not-json','[]',json.dumps(dict(a['state']['gauges'],Trust=True)),json.dumps(dict(a['state']['gauges'],Trust=101))]:
+            with store.connection(write=True) as db:
+                db.execute('UPDATE conversations SET gauges=? WHERE id=?',(encoded,a['id']))
+            result=self.client.get(f"/api/conversations/{a['id']}")
+            self.assertEqual(result.status_code,500)
+            self.assertEqual(result.json['error']['code'],'history_unreadable')
+            self.assertEqual(self.turn(a).json['error']['code'],'history_unreadable')
+            self.assertEqual(self.fake.calls,0)
+            with store.connection() as db:
+                self.assertEqual(db.execute('SELECT gauges FROM conversations WHERE id=?',(a['id'],)).fetchone()[0],encoded)

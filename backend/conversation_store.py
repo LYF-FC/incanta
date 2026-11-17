@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 from datetime import datetime, timezone
 import json
+import math
 import os
 from pathlib import Path
 import sqlite3
@@ -86,9 +87,25 @@ class ConversationStore:
                         return
                     self.path.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
                     fd=os.open(self.path,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+                    created=os.fstat(fd)
                     os.close(fd)
-                    db=sqlite3.connect(f'file:{quote(str(self.path))}?mode=rw',uri=True,timeout=5)
-                    db.executescript((Path(__file__).parent/'migrations/001_companion.sql').read_text())
+                    try:
+                        db=sqlite3.connect(f'file:{quote(str(self.path))}?mode=rw',uri=True,timeout=5)
+                        db.executescript((Path(__file__).parent/'migrations/001_companion.sql').read_text())
+                    except (sqlite3.DatabaseError,OSError):
+                        if db is not None:
+                            db.close()
+                            db=None
+                        # Only undo this call's new, failed database, while the
+                        # initialization lock still excludes other local writes.
+                        # An existing or replaced file must never be removed.
+                        try:
+                            current=self.path.lstat()
+                            if (current.st_dev,current.st_ino)==(created.st_dev,created.st_ino):
+                                self.path.unlink()
+                        except OSError:
+                            pass
+                        raise
                 if db is None:
                     db=sqlite3.connect(f'file:{quote(str(self.path))}?mode=rw',uri=True,timeout=5)
                 self._seen=True
@@ -120,12 +137,25 @@ class ConversationStore:
     def row(db,cid):
         result=db.execute('SELECT * FROM conversations WHERE id=?',(identifier(cid),)).fetchone() if db else None
         if result is None:raise AppError('not_found')
+        ConversationStore.decode_state(result['gauges'],result['emotion'])
         return dict(result)
+
+    @staticmethod
+    def decode_state(encoded,emotion):
+        try:
+            gauges=json.loads(encoded)
+            if (not isinstance(gauges,dict) or set(gauges)!=set(get_current_gauges())
+                    or any(type(v) not in (int,float) or not math.isfinite(v) or not 0<=v<=100 for v in gauges.values())
+                    or not isinstance(emotion,str) or not emotion.strip()):
+                raise ValueError
+        except (ValueError,TypeError,OverflowError):
+            raise AppError('history_unreadable') from None
+        return {'gauges':gauges,'emotion':emotion}
 
     @staticmethod
     def public(row):
         result=dict(row)
-        result['state']={'gauges':json.loads(result.pop('gauges')),'emotion':result.pop('emotion')}
+        result['state']=ConversationStore.decode_state(result.pop('gauges'),result.pop('emotion'))
         return result
 
     def insert_conversation(self,db,values):
@@ -159,7 +189,9 @@ class ConversationStore:
 
     @staticmethod
     def turn_public(row):
-        value=dict(row);value['gauges']=json.loads(value['gauges']);return value
+        value=dict(row)
+        value['gauges']=ConversationStore.decode_state(value['gauges'],value['emotion'])['gauges']
+        return value
 
     def update_settings(self,cid,body):
         if not isinstance(body,dict):raise AppError('invalid_request')

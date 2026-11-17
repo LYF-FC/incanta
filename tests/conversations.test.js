@@ -50,3 +50,26 @@ test('literal settings and memories use text nodes rather than HTML',()=>{
   const document={createElement:tag=>({tag,set innerHTML(value){throw Error('unsafe');}})};
   assert.equal(textElement(document,'span','<img src=x>').textContent,'<img src=x>');
 });
+
+test('sending is blocked while another conversation loads, including a failed switch',async()=>{
+  let finish,posts=0,fail=false;
+  const client=createClient(async(path,options)=>{
+    if(options?.method){posts++;return reply({response:'synthetic'});}
+    if(path.endsWith('/a'))return reply({id:'a'});
+    return new Promise(resolve=>{finish=()=>resolve(fail?{ok:false,json:async()=>({error:{message:'Synthetic unavailable'}})}:reply({id:'b'}));});
+  },()=> 'synthetic-request');
+  await client.select('a');
+  let selection=client.select('b');
+  await assert.rejects(client.send('A draft must not be sent to B'));
+  assert.equal(posts,0);
+  finish();await selection;
+  assert.equal(client.selectedId,'b');
+  await client.select('a');fail=true;
+  selection=client.select('b');
+  await assert.rejects(client.send('Still viewing A'));
+  finish();await assert.rejects(selection);
+  assert.equal(client.selectedId,'a');
+  assert.equal(client.selecting,false);
+  await client.send('Explicit message in restored A');
+  assert.equal(posts,1);
+});

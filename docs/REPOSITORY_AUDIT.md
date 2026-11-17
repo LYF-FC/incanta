@@ -42,3 +42,7 @@ A09 personality prompt integration, A10 factual-memory quality, A11 session isol
 ## Companion follow-up — 002, 2026-11-17
 
 The active path now addresses A09 through per-chat prompt settings, A10 through explicit sourced canonical facts (no generated sibling milestone), and A11 through isolated durable conversation records. Synthetic tests cover two separate-process restarts, canonical sharing/correction/deletion, stale generation, idempotent requests and non-destructive import. A12 rendering and A13 full dependency review remain planned; proactive dialogue/notifications are not implemented. See [verification 002](../specs/002-companion-conversations/verification.md) for actual automated/browser/native evidence and pending owner review. Short native success is not 30-minute dialogue-quality acceptance or production certification.
+
+## PR and CI review — 2026-11-17
+
+Repository visibility is now public by the owner's decision; the private-repository/plan findings in the dated recovery baseline above are historical. Both original PR #7/#8 job sets were blocked before allocation by GitHub account billing/spending-limit checks, then passed on rerun attempt 2 after the visibility change. No workflow bypass or model-backed CI was introduced. 002 review fixes cover pending chat selection, failed first database setup and malformed persisted state. See its verification record for regression evidence and the unchanged owner acceptance/delivery gates.

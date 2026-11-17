@@ -47,8 +47,19 @@ async function refreshMemories() {
   IncantaMemory.render({document,container:byId('memory-list'),facts:result.facts,conversations,conversationId:cid,
     mutate:client.mutate,refresh:refreshMemories,onError:error});
 }
+function syncChatControls() {
+  const waiting = client.busy || client.selecting;
+  byId('send-button').disabled = waiting;byId('chat-input').disabled = waiting;
+  byId('send-button').textContent = client.selecting ? 'Loading…' : client.busy ? 'Replying…' : 'Send';
+}
 async function selectConversation(cid) {
-  const result = await client.select(cid);if(!result)return;
+  const loading = client.select(cid);syncChatControls();
+  let result;
+  try {result = await loading;}
+  catch(caught) {byId('conversation-select').value = client.selectedId || '';throw caught;}
+  finally {syncChatControls();}
+  if(!result)return;
+  if(current?.id !== result.id)byId('chat-input').value = '';
   current = result;selectedStorage(cid);
   byId('conversation-select').value = cid;
   byId('conversation-panel').hidden = false;byId('setup-panel').hidden = true;byId('edit-settings').disabled = false;
@@ -70,7 +81,7 @@ async function initialize() {
 }
 function action(handler) {return async event=>{event.preventDefault();try {await handler(event);error('');} catch(caught) {error(caught.message);}};}
 byId('refresh-status').addEventListener('click',action(async()=>{await client.initialize();await refreshStatus();await listConversations();}));
-byId('new-conversation').addEventListener('click',()=>{client.clear();current = null;selectedStorage(null);byId('conversation-panel').hidden = true;byId('edit-settings').disabled = true;byId('conversation-select').value = '';showSetup(null);});
+byId('new-conversation').addEventListener('click',()=>{client.clear();syncChatControls();current = null;selectedStorage(null);byId('conversation-panel').hidden = true;byId('edit-settings').disabled = true;byId('conversation-select').value = '';showSetup(null);});
 byId('edit-settings').addEventListener('click',()=>{if(current)showSetup(current);});
 byId('cancel-setup').addEventListener('click',()=>{byId('setup-panel').hidden = true;});
 byId('conversation-select').addEventListener('change',action(async event=>{if(event.target.value)await selectConversation(event.target.value);}));
@@ -87,7 +98,7 @@ byId('chat-form').addEventListener('submit',async event=>{
     const result = await client.send(input.value);
     if(result.applies && client.selectedId === cid) {input.value = '';await listConversations();if(client.selectedId === cid)await selectConversation(cid);error('');}
   } catch(caught) {error(caught.message);}
-  finally {byId('send-button').disabled = false;input.disabled = false;byId('send-button').textContent = 'Send';input.focus();}
+  finally {syncChatControls();input.focus();}
 });
 byId('toggle-gauges').addEventListener('click',event=>{const show = byId('gauge-container').hidden;byId('gauge-container').hidden = !show;event.target.textContent = show ? 'Hide gauges' : 'Show gauges';event.target.setAttribute('aria-expanded',String(show));});
 byId('memory-form').addEventListener('submit',action(async()=>{

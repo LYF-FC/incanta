@@ -52,3 +52,17 @@ This short check is not an owner verdict on personality/boundary adherence or 30
 - **T023:** documentation/checks and separate feature PR are prepared; reviewer decisions/merge remain separate. Neither M1 nor 002 is automatically merged or tagged.
 - GitHub Actions for PR #7 could not start any test steps or allocate a runner. Its check annotation reports an account billing/spending-limit blocker. This is a hosted-execution blocker, not a passing remote check or evidence that tests failed. Only the owner can resolve account billing settings; no account/payment setting was changed.
 - ComfyUI/rendering, proactive follow-ups/notifications and full consistent app backup/restore are still planned features 003–005.
+
+## PR/CI review follow-up — 2026-11-17
+
+Both original PR runs failed before any runner/test step because GitHub reported an account billing/spending-limit issue. The owner changed repository visibility to public. GitHub confirmed `visibility=public`; rerunning only failed jobs produced **successful attempt 2** for [PR #7 run](https://github.com/LYF-FC/incanta/actions/runs/44167022471) and [PR #8 baseline run](https://github.com/LYF-FC/incanta/actions/runs/44172247594). These successes apply to their recorded baseline heads; the follow-up correction commit requires its own CI result. No payment/account setting, runner policy or test gate was changed by the agent.
+
+Review found and corrected three independent edge cases, traced as T024–T026:
+
+1. Chat selection previously changed the send target before loading succeeded. Sending is now blocked while loading; failure retains the last loaded chat, stale responses are ignored and drafts clear on a successful switch to another chat.
+2. A failed first schema load previously left an empty/partial database that prevented retry. Initialization now cleans up only its own newly allocated file (matching device/inode), under its initialization lock; existing or replaced files remain untouched.
+3. Malformed persisted gauge/emotion state previously returned a misleading model error or reached inference. Validated state reads now return `history_unreadable` and preserve the database without inference.
+
+Each new regression failed before its correction. Final local suites pass **49 Python tests on both 3.11 and 3.13**, plus **12 Node tests**; JavaScript/shell syntax and staged privacy/whitespace checks remain required before commit. A synthetic browser with delayed chat loading visibly disabled the input/Send control, then displayed the new chat with an empty draft and usable Send. No native model was loaded or downloaded during this issue/CI review. The earlier short native evidence is retained; owner-reviewed 30-minute acceptance remains pending.
+
+The five milestone issues are not all completed merely because planning artifacts exist. M1 is delivered through merged PR #7 and issue #1 is closed. M3 mechanical criteria depend on accepted PR #8 delivery; the distinct 30-minute dialogue-quality gate is explicitly tracked in issue #9. M2 still needs proactive dialogue/export/recovery scope, M4 needs actual rendering, and M5 needs release/backup-restore acceptance. PR #8 remains under review until its correction commit has green CI; owner authorization permits merge when that condition holds.

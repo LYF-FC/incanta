@@ -2,7 +2,7 @@
 (function(root) {
   'use strict';
   function createClient(fetchImpl, idFactory = () => root.crypto.randomUUID()) {
-    let token = '', selectedId = null, generation = 0, busy = false;
+    let token = '', selectedId = null, generation = 0, busy = false, selecting = false;
     const pending = new Map();
     async function request(path, options) {
       try {
@@ -20,16 +20,24 @@
     return {
       get selectedId() {return selectedId;},
       get busy() {return busy;},
+      get selecting() {return selecting;},
       request, mutate,
       async initialize() {const value = await request('/api/bootstrap');token = value.csrf_token;return value;},
-      clear() {selectedId = null;generation += 1;},
+      clear() {selectedId = null;generation += 1;selecting = false;},
       async select(id) {
-        selectedId = id;const snapshot = ++generation;
-        const result = await request(`/api/conversations/${encodeURIComponent(id)}`);
-        return snapshot === generation ? result : null;
+        const snapshot = ++generation;selecting = true;
+        try {
+          const result = await request(`/api/conversations/${encodeURIComponent(id)}`);
+          if (snapshot !== generation) return null;
+          selectedId = id;
+          return result;
+        } catch(error) {
+          if (snapshot !== generation) return null;
+          throw error;
+        } finally {if (snapshot === generation) selecting = false;}
       },
       async send(message) {
-        if (busy || !selectedId || typeof message !== 'string' || !message.trim()) throw new Error('Choose a conversation and wait for any pending reply.');
+        if (busy || selecting || !selectedId || typeof message !== 'string' || !message.trim()) throw new Error('Choose a conversation and wait for it to load or finish replying.');
         const cid = selectedId, snapshot = generation, trimmed = message.trim();
         let submission = pending.get(cid);
         if (!submission || submission.message !== trimmed) {
