@@ -154,3 +154,11 @@ button[type="submit"]:hover,
   0% { background-color: #dc3545; }
   100% { background-color: #ff4d6d; }
 }
+/* Preserve literal whitespace without accepting HTML from conversation text. */
+.chat-bubble span { white-space: pre-wrap; overflow-wrap: anywhere; }
+#chat-error { color: #ffb6b6; margin: 12px 0; min-height: 1.2em; }
+#readiness-label { margin: 12px 0; }
+#refresh-status { margin-bottom: 8px; padding: 6px 10px; cursor: pointer; }
+button:disabled { cursor: wait; opacity: 0.6; }
+
+.gauge-fill { white-space: nowrap; text-align: left; text-indent: 8px; }

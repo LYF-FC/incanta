@@ -1,50 +1,60 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template
-from backend.chat_engine import process_user_input
-import os
+"""Loopback-only Flask entry point; asset and model access happens on requests."""
+from flask import Flask, jsonify, render_template, request
+from werkzeug.exceptions import HTTPException
+from backend.config import ROOT, Settings
+from backend.chat_engine import ChatEngine
+from backend.errors import AppError
 
-app = Flask(
-    __name__,
-    static_url_path="/",
-    static_folder="frontend",
-    template_folder="frontend"
-)
 
-# 🟢 Home route: serve the index.html
-@app.route("/")
-def index():
-    return render_template("index.html")
+def create_app(settings=None, inference=None, memory=None, rng=None):
+    settings = settings if settings is not None else Settings.from_env()
+    app = Flask(__name__, static_url_path='', static_folder=str(ROOT/'frontend'),
+                template_folder=str(ROOT/'frontend'))
+    app.config.update(MAX_CONTENT_LENGTH=64*1024, DEBUG=False,
+                      TRUSTED_HOSTS=['localhost', '127.0.0.1', '[::1]'])
+    engine = ChatEngine(settings, inference=inference, memory=memory, rng=rng)
+    app.extensions['incanta'] = engine
 
-# 🟢 Serve frontend assets like CSS or JS
-@app.route("/<path:path>")
-def static_proxy(path):
-    return send_from_directory("frontend", path)
+    @app.get('/')
+    def index():
+        return render_template('index.html')
 
-# 🟢 API Status route (for frontend fetch test)
-@app.route("/api/status", methods=["GET"])
-def status():
-    return jsonify({"status": "ok"})
+    @app.get('/api/status')
+    def status():
+        return jsonify(engine.status())
 
-# 🟢 Main chat route (POST)
-@app.route("/api/chat", methods=["POST"])
-def chat():
-    data = request.get_json()
-    user_input = data.get("message", "")
+    @app.post('/api/chat')
+    def chat():
+        if not request.is_json:
+            raise AppError('unsupported_media_type')
+        data = request.get_json()
+        if not isinstance(data, dict):
+            raise AppError('invalid_request')
+        return jsonify(engine.process(data.get('message')))
 
-    if not user_input:
-        return jsonify({"error": "No input provided"}), 400
+    @app.errorhandler(AppError)
+    def controlled_error(error):
+        return jsonify(error={'code':error.code, 'message':error.message}), error.status
 
-    try:
-        response, gauges, emotion = process_user_input(user_input)
-        return jsonify({
-            "response": response,
-            "gauges": gauges,
-            "emotion": emotion
-        })
+    @app.errorhandler(HTTPException)
+    def http_error(error):
+        categories = {400:'invalid_request', 413:'input_too_large', 415:'unsupported_media_type'}
+        if error.code in categories:
+            return controlled_error(AppError(categories[error.code]))
+        return jsonify(error={'code':'http_error', 'message':'The request could not be completed.'}), error.code
 
-    except Exception as e:
-        print(f"[ERROR] Failed to process input: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+    @app.errorhandler(Exception)
+    def unexpected_error(error):
+        # Avoid Flask's default traceback logging of raw content/asset paths.
+        return controlled_error(AppError('generation_failed'))
 
-# 🔵 Run the Flask server
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    return app
+
+
+app = create_app()
+
+if __name__ == '__main__':
+    settings = app.extensions['incanta'].settings
+    if not settings.valid:
+        raise SystemExit('Invalid local settings. Check the documented configuration.')
+    app.run(host=settings.host, port=settings.port, debug=False, use_reloader=False)

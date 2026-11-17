@@ -109,3 +109,8 @@ node_modules/
 /.agents/skills/speckit-*/*
 !/.agents/skills/speckit-*/SKILL.md
 /.codex/
+
+# Interrupted editor/runtime temporary files
+*.tmp
+*.swp
+Thumbs.db

@@ -15,7 +15,6 @@ GAUGE_KEYS = [
 
 # Emotion thresholds mapped to dominant gauge values
 EMOTION_MAPPING = [
-    ("Neutral", lambda g: True),  # Default
     ("Happy", lambda g: g["Trust"] > 50),
     ("Sad", lambda g: g["Affection"] < 30),
     ("Shy", lambda g: g["Confidence"] < 25),
@@ -32,13 +31,16 @@ EMOTION_MAPPING = [
     ("Pleasured", lambda g: g["Arousal"] > 75),
     ("Orgasmic", lambda g: g["Arousal"] == 100),
     ("Horny", lambda g: g["Arousal"] > 60 and g["Curiosity"] > 40),
+    ("Neutral", lambda g: True),  # Fallback after all meaningful rules
 ]
 
-def update_gauges(user_input: str, response: str, gauges: dict) -> dict:
+def update_gauges(user_input: str, response: str, gauges: dict, rng=None) -> dict:
     """
     Adjust gauges based on keywords and responses.
     You can improve this later with an emotion classifier.
     """
+    gauges = gauges.copy()
+    rng = rng if rng is not None else random
     text = (user_input + " " + response).lower()
 
     def boost(key, amount=5):
@@ -73,7 +75,7 @@ def update_gauges(user_input: str, response: str, gauges: dict) -> dict:
     # Random soft fluctuation
     for k in gauges:
         if k not in ["Arousal"]:
-            fluctuation = random.randint(-1, 1)
+            fluctuation = rng.randint(-1, 1)
             gauges[k] = max(0, min(100, gauges[k] + fluctuation))
 
     return gauges

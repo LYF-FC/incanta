@@ -1,0 +1,9 @@
+# Scheduling data and transitions
+
+- **FollowupPolicy:** conversation UUID, revision, enabled false by default, paused boolean, timezone IANA name, quiet start/end local clock times, min_idle_minutes `5–240`, cooldown_minutes `15–1440`, daily_cap `0–10`. Defaults 15, 60 and 2. Global cap `0–20`, default 4; notification spacing 15 minutes globally. Quiet defaults 22:00–08:00 Europe/Paris.
+- **Activity:** last user turn UTC; visible/focused heartbeat timestamp; heartbeat interval 30 seconds and expiry 90 seconds. Heartbeat is operational metadata, not a transcript or permission to read another chat.
+- **DueItem:** UUID, conversation, unique due_slot_key, scheduled UTC time, policy/settings/context revisions, claim state `pending|claimed|completed|skipped|failed`, attempt_count `0–2`, lease timestamp/owner. Recovered claims recheck committed inbox before retry.
+- **Followup:** UUID, unique due_item_id, conversation, private text, generated_at UTC, source turn/fact IDs/revisions, read_at nullable. Save only after eligibility/revision check. Deleted fact source removes it from future retrieval; existing generated text is a historical message, not a fact copy.
+- **NotificationAttempt:** UUID, unique followup_id for automatic attempt, state `pending|attempted|accepted|denied|failed|uncertain|suppressed`, timestamp and safe reason code. No private text/paths. Mark attempted before native dispatch; uncertain attempts do not automatically re-alert. Accepted means OS helper accepted, not seen by owner.
+
+State transitions and caps are transactional. Pending due work coalesces to at most one per chat on wake/restart. Current policy/activity/context must remain eligible before publish. User activity cancels/defer pending proactive work. Failed generation permits at most one delayed retry (15 minutes); notification failure changes only attempt state. Inbox read state survives restart and never changes conversation ownership.

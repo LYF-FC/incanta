@@ -1,17 +1,26 @@
 # Verification strategy
 
-## Available now
+## Automated acceptance
 
-`python3 -m unittest discover -s tests -v` exercises repository guard behavior with synthetic data and temporary Git repositories. `python3 scripts/check_repository.py` scans index blobs; `--tracked` scans HEAD. It checks private/runtime paths, binary/large blobs, selected credential patterns, exact JSON exceptions and Python syntax. It never prints credential matches.
+Install the lightweight web dependency from `requirements-test.txt`, then run:
 
-GitHub Actions runs that suite on Python 3.11 and 3.13, parses tracked Python through the guard, checks JavaScript with `node --check` and Bash helpers with `bash -n`. It does not install historical app requirements or use model weights. A passing run certifies only these checks.
+```sh
+python -m unittest discover -s tests -v
+node --test tests/frontend.test.js
+node --check frontend/app.js
+node --check frontend/chat_helpers.js
+```
 
-## Required for specification 001
+Python tests cover import/startup/readiness without assets, request validation and size boundaries, fake-adapter lifecycle, exactly one append per successful turn, preservation of old/unknown memory fields, failure rollback, corrupt/read-only histories, real threaded overlap rejection, emotion precedence/bounds, and repository privacy safeguards. Frontend Node tests cover literal markup display, HTTP/network/invalid-response failure recovery, duplicate submission and retry state.
 
-Introduce a fake inference adapter and temporary memory storage, then test app startup/readiness, request contracts, malformed input, exactly-once turn persistence, atomic-write failures, deterministic emotion precedence, overlapping requests and frontend literal rendering/error states. Follow the feature tasks for file paths and requirement traceability.
+No automated test downloads or uses a real model/private character/history. Tests use temporary synthetic files. GitHub Actions runs Python on 3.11/3.13, the frontend suite on Node 24, repository checks and Bash syntax validation. The native inference dependency is deliberately not installed in CI.
 
-A manual real-model smoke test is a separate exit gate: record date, runtime versions, OS/hardware, model identifier/revision/checksum, command/settings without private paths and pass/fail. Verify one response, one stored event and a restart. Do not commit private inputs/outputs, histories or model files. Until that check happens, the app remains unverified.
+## Repository safeguards
 
-## Scope of the repository guard
+`python scripts/check_repository.py` checks index blobs; `--tracked` checks HEAD. It detects private/runtime paths, selected credential patterns, binary/large blobs, unexpected symlinks/submodules, exact JSON exceptions and Python syntax. It never prints credential matches. It does not detect all private prose, inspect historical commits or audit package vulnerabilities; manual staged-content review remains necessary.
 
-It detects common patterns, not arbitrary private prose or every possible credential format. Metadata allowlisting permits only particular paths, not secret contents. Review staged files manually. The guard does not scan all historical commits or audit installed packages. Runtime schemas, migrations and model safety/quality belong to later feature verification.
+## Browser and real-model evidence
+
+See [verification 001](../specs/001-reliable-local-chat/verification.md) for the actual environment/results and remaining gates. Browser verification uses a fake adapter and synthetic data. Native inference is a separate manual check, using an already-owned local model and temporary synthetic character/history, not a side effect of test discovery.
+
+Record only date, runtime/build/hardware context, model identity/checksum and pass/fail. Do not attach prompts/responses, private paths, histories or weights. A native-library crash may terminate the interpreter; a passing fake-backed suite does not prove a particular native binary/model combination is compatible. The 2026-11-17 explicit real-model/separate-process restart gate passed; reviewed delivery remains pending. Re-run native checks when the model/runtime changes.

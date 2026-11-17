@@ -1,21 +1,39 @@
-# Planned validation quickstart
+# Reliable local chat validation
 
-These instructions describe checks to add while implementing 001. The referenced application tests do not exist yet. For currently available tooling, use [the development guide](../../docs/DEVELOPMENT.md).
+Actual results and open gates are in [verification.md](verification.md). Use Python 3.11 or 3.13 and Node; automated checks use fake inference and temporary storage.
 
 ## Model-free acceptance
 
-1. Create the reviewed test environment from the future `requirements-test.txt`; do not install/download a real model.
-2. Run the proposed Flask contract, chat/state, gauge and temporary-memory tests plus frontend helper tests listed in `tasks.md`.
-3. Launch the app with fake inference and synthetic configuration; verify useful initial state, literal markup text, one stored event and error retry behavior.
-4. Simulate missing SSD, malformed JSON, concurrent requests, inference failure and atomic-write failure. Preserve existing history in every failure case.
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-test.txt
+python -m unittest discover -s tests -v
+node --test tests/frontend.test.js
+node --check frontend/app.js
+node --check frontend/chat_helpers.js
+bash -n run.sh
+SPECIFY_FEATURE_DIRECTORY=specs/001-reliable-local-chat bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
+```
 
-## Manual local-model exit gate
+Expected: 32 Python and six frontend tests pass on the current baseline. Counts may change as features are added. Tests cover missing assets, malformed input, concurrency, inference/storage failure and preserved history. Do not install the historical native dependency snapshot just for checks.
 
-After automated acceptance passes, explicitly configure an already-owned local model and synthetic personality. Use the implemented settings documented by T019, not speculative environment instructions from this plan.
+## Synthetic browser journey
 
-- Open the interface and confirm no initialization/generation occurs on status polling.
-- Send one synthetic message. Confirm a response and exactly one additional timeline entry.
-- Restart and confirm the history remains readable. Confirm errors contain no private path/content.
-- Record date, OS/hardware, runtime version, model identity/revision/checksum and pass/fail in a non-sensitive verification note. Do not attach conversation data or model weights.
+Create temporary settings with `tests/helpers.py:settings_for`, inject `FakeInference` into `frontend_app.create_app`, and serve on a free loopback port with debug/reloader off. This is a test harness, not a production fake-mode option.
 
-M1 is not complete until both automated and manual gates pass. A disconnected model or lack of native runtime can leave the manual gate pending; report it plainly rather than marking the milestone complete.
+Verify initial readiness without inference/history creation, literal user/model markup, one stored event, delayed-request disabled controls, controlled generation failure with unchanged state/event count, successful retry, gauge toggle and missing-character readiness refresh. Inspect only synthetic history counts. See the recorded T018 outcomes for the completed pass.
+
+## Explicit native-model gate
+
+Set `INCANTA_MODEL_PATH` locally to an already-owned GGUF; never commit the path. Install only the separately scoped native dependency when needed; see [setup](../../SETUP.md). Run explicitly, outside automated discovery:
+
+```sh
+python scripts/verify_local_model.py
+```
+
+Expected: PASS, one event, new-app reload and a non-sensitive model checksum/environment report. Exit 2 means the configured model is unavailable; exit 1 means verification failed. A native crash also fails verification. This runner reads no private character/history and downloads nothing.
+
+For the process/browser restart check, point `INCANTA_PERSONALITY_PATH` at a temporary synthetic object and `INCANTA_DATA_DIR` at temporary storage, then launch `python frontend_app.py`. Check unloaded readiness, send one synthetic message and verify one event. Stop the process, restart with the same temporary settings, and confirm status does not initialize inference and the memory reader reloads that event. The browser transcript and gauges may reset in M1; this is not the MVP continuity gate.
+
+Record only OS/hardware, runtime version/build settings, model identity/checksum and pass/fail. Do not publish local paths, prompts, responses, weights or histories. The recorded native/separate-process gate passed on 2026-11-17. M1 delivery remains pending until reviewed-delivery gates pass.

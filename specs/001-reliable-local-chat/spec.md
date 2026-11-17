@@ -1,10 +1,10 @@
 # Feature Specification: Reliable local chat
 
-**Feature Branch**: `001-reliable-local-chat` (reserved; create when implementation starts)
+**Feature Branch**: `001-reliable-local-chat` (existing implementation branch)
 
 **Created**: 2026-11-04
 
-**Status**: Ready for implementation review; application work not started
+**Status**: Automated, synthetic-browser and explicit native-model/process-restart verification passed on 2026-11-17; reviewed-delivery gate remains pending. See [verification.md](verification.md).
 
 **Input**: Restart the recovered local conversation project with predictable startup, truthful status, working emotional state, reliable memory and a usable chat interface before adding proactive behavior.
 

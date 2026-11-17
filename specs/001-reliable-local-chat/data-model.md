@@ -1,4 +1,4 @@
-# Proposed data model and invariants
+# Data model and invariants
 
 ## Runtime settings
 

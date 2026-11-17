@@ -10,9 +10,13 @@ The latest recovered source came from `Documents/Projects/Incanta`. Older varian
 
 Incanta develops character interaction, emotional state, memory and optional visuals. Butler remains the separate strategic production family-assistant platform. No production household data or service should depend on this experimental app. Components may be reused only after their own security, dependency and persistence review.
 
+On 2026-11-17 the owner defined a private, English-only Celeste companion POC on a MacBook Pro M2 with 16 GB RAM, with entirely local chat/image inference. The MVP includes per-chat personality and relationship/content setup, separate conversations with explicitly shared selected facts, persistent memories with inspect/correct/delete controls, a reference-matching photorealistic portrait and scenes, manual/automatic image requests, and proactive follow-ups. Corrections/deletions apply wherever a fact is shared. Away contact uses Mac notifications while Incanta runs, with missed follow-ups shown on return. These are product requirements, not implemented capabilities. The [roadmap](ROADMAP.md#owner-defined-companion-mvp) records scope, acceptance and delivery order; feature 001 remains the narrower reliability baseline.
+
 ## Evidence over old plans
 
-The current implementation is Flask plus plain JavaScript and `llama-cpp-python`. It is not React/FastAPI, and image metadata is not a working ComfyUI adapter. Python 3.13.5 was recorded by the recovered environment; no tested runtime support range has yet been established for the app. Repository tooling targets Python 3.11 and 3.13.
+The current implementation is Flask plus plain JavaScript and `llama-cpp-python`. It is not React/FastAPI, and image metadata is not a working ComfyUI adapter. Python 3.13.5 was recorded by the recovered environment; lightweight fake-backed application checks target Python 3.11 and 3.13. Real local inference needs separate native-runtime verification.
+
+On 2026-11-17, M1's 32 Python tests, six frontend tests, synthetic browser journey and explicit owned-model/separate-process history reload passed; reviewed delivery remains pending. See [verification 001](specs/001-reliable-local-chat/verification.md) for the exact environment and native-runtime access caveat. Features 002–005 now have specifications, plans, contracts and 83 unchecked implementation tasks linked from the roadmap. No MVP memory/session/render/notification capability is implied by those planning artifacts.
 
 ## Source of truth
 

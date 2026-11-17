@@ -8,4 +8,4 @@
 - Established a constitution, roadmap, architecture/audit, development/testing/storage guidance, issue/PR templates and repository CI.
 - Prepared specification 001 for reliable local chat, including design, contracts and implementation tasks.
 
-Application behavior is unchanged by the development-foundation pass. No M1 application task, real-model smoke test or new runtime release is claimed complete.
+The development-foundation pass preserved application behavior. The subsequent M1 implementation adds import-safe startup, configured local asset paths, lazy inference, complete status/error contracts, input limits, single-writer atomic memory, non-neutral emotion precedence, safe text rendering and recoverable UI controls. See the feature verification record for the actual model-backed gate; no new runtime release is tagged.

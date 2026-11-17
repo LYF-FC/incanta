@@ -4,7 +4,7 @@ Read `README.md`, `CONTEXT.md`, `.specify/memory/constitution.md`, `ROADMAP.md` 
 
 ## Scope and evidence
 
-Keep the existing Flask/plain JavaScript stack unless a specification changes it. Never claim React, FastAPI or live ComfyUI is implemented here. Current milestone is M1; seed specification 001 exists but its application tasks are unchecked. Do not treat planning checklists as proof of runtime verification.
+Keep the existing Flask/plain JavaScript stack unless a specification changes it. Never claim React, FastAPI or live ComfyUI is implemented here. Current milestone is M1; specification 001 now has implementation tasks and a verification record. Read their actual status before claiming completion. Do not treat planning checklists as proof of runtime verification.
 
 Use `./scripts/specify.sh` for CLI commands that upstream instructions refer to as `specify`; no global CLI install is assumed.
 
@@ -20,6 +20,6 @@ Do not delete/move original source folders, archives or model assets under the g
 
 ## Verification and delivery
 
-Run `python3 -m unittest discover -s tests -v`, the staged repository checker, and `git diff --cached --check` for relevant changes. Check modified JavaScript with `node --check`; Bash with `bash -n`. No app dependencies are needed for repository-only checks. Keep `requirements.txt` as the historical snapshot until a separate dependency change.
+Run `python3 -m unittest discover -s tests -v`, the staged repository checker, and `git diff --cached --check` for relevant changes. Check modified JavaScript with `node --check`; Bash with `bash -n`. Repository-only checks need no app dependencies. Full acceptance tests install the lightweight `requirements-test.txt`; never install native inference just for CI. Keep `requirements.txt` as the historical snapshot until a separate dependency change.
 
 Use reviewed branches and PRs, no force-pushes, and explicit staging. Report what changed, what was tested and what remains unverified. Keep generated Spec Kit files upstream-compatible; record customizations and preserve the upstream license. The project owner's instructions remain authoritative.

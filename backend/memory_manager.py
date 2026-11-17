@@ -1,134 +1,97 @@
+"""Single-process, append-once JSON memory with atomic file replacement."""
+import copy
+from datetime import datetime
 import json
 import os
-from typing import List, Dict, Optional
-from datetime import datetime
+from pathlib import Path
+import re
+import tempfile
+from backend.errors import AppError
 
-MEMORY_PATH = "chat_histories"
+
+def empty_memory():
+    return {'timeline':[], 'milestones':{}, 'emotions':{}, 'beliefs':{},
+            'desires':{}, 'reflections':[], 'adaptive_style':{}}
+
 
 class MemoryManager:
-    def __init__(self, character_name: str):
-        self.character_name = character_name.lower()
-        os.makedirs(MEMORY_PATH, exist_ok=True)
-        self.memory_file = os.path.join(MEMORY_PATH, f"{self.character_name}_memory.json")
-        self.memory = self.load_memory()
+    def __init__(self, character_name, data_dir):
+        name = re.sub(r'[^a-z0-9_-]', '_', character_name.lower()) or 'character'
+        self.memory_file = Path(data_dir) / f'{name}_memory.json'
 
-    def load_memory(self) -> Dict:
-        if os.path.exists(self.memory_file):
-            with open(self.memory_file, "r", encoding="utf-8") as f:
-                return json.load(f)
-        else:
-            return {
-                "timeline": [],
-                "milestones": {},
-                "emotions": {},
-                "beliefs": {},
-                "desires": {},
-                "reflections": [],
-                "adaptive_style": {}
-            }
+    def check_storage(self):
+        parent = self.memory_file.parent
+        try:
+            while not parent.exists():
+                if parent.is_symlink():
+                    raise OSError
+                parent = parent.parent
+            if not parent.is_dir() or not os.access(parent, os.W_OK | os.X_OK):
+                raise OSError
+            if self.memory_file.exists() and not os.access(self.memory_file, os.R_OK | os.W_OK):
+                raise OSError
+        except OSError:
+            raise AppError('storage_unavailable') from None
 
-    def save_memory(self):
-        with open(self.memory_file, "w", encoding="utf-8") as f:
-            json.dump(self.memory, f, indent=2, ensure_ascii=False)
+    def load_memory(self):
+        try:
+            with self.memory_file.open(encoding='utf-8') as file:
+                document = json.load(file)
+        except FileNotFoundError:
+            return empty_memory()
+        except (ValueError, UnicodeError):
+            raise AppError('history_unreadable') from None
+        except OSError:
+            raise AppError('storage_unavailable') from None
+        defaults = empty_memory()
+        if not isinstance(document, dict) or any(
+            key in document and not isinstance(document[key], type(value))
+            for key, value in defaults.items()
+        ):
+            raise AppError('history_unreadable')
+        for key, value in defaults.items():
+            document.setdefault(key, value)
+        return document
 
-    def add_timeline_event(self, user_input: str, ai_response: str, timestamp: Optional[str] = None):
-        timestamp = timestamp or datetime.now().strftime("%Y-%m-%d %H:%M")
-        self.memory["timeline"].append({
-            "timestamp": timestamp,
-            "user": user_input,
-            "celeste": ai_response
-        })
-        self.save_memory()
+    def append_event(self, user_input, response, timestamp):
+        document = copy.deepcopy(self.load_memory())
+        document['timeline'].append({'timestamp':timestamp, 'user':user_input, 'celeste':response})
+        # Historical heuristic retained for compatibility; factual memory is M2.
+        if 'brother' in response.lower():
+            document['milestones']['has_siblings'] = 'yes'
+        temporary = None
+        try:
+            self.memory_file.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+            with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8',
+                                             dir=self.memory_file.parent,
+                                             prefix='.incanta-', suffix='.tmp', delete=False) as file:
+                temporary = Path(file.name)
+                json.dump(document, file, ensure_ascii=False, indent=2)
+                file.flush()
+                os.fsync(file.fileno())
+            os.replace(temporary, self.memory_file)
+            temporary = None  # os.replace is the commit boundary; no fallible work afterward.
+        except (OSError, ValueError, UnicodeError):
+            raise AppError('persistence_failed') from None
+        finally:
+            if temporary is not None:
+                try:
+                    temporary.unlink(missing_ok=True)
+                except OSError:
+                    pass
 
-    def add_milestone(self, key: str, value: str):
-        self.memory["milestones"][key] = value
-        self.save_memory()
+    @staticmethod
+    def get_context_snippet(document, max_events=5):
+        snippets = []
+        for event in document['timeline'][-max_events:]:
+            if isinstance(event, dict):
+                snippets.append(f"[{event.get('timestamp', '')}] You: {event.get('user', '')}\nCeleste: {event.get('celeste', '')}")
+        for key, value in document['milestones'].items():
+            snippets.append(f'[FACT] {key}: {value}')
+        return '\n'.join(snippets[-max_events:])
 
-    def update_emotion(self, topic: str, feeling: str):
-        self.memory["emotions"][topic] = feeling
-        self.save_memory()
 
-    def update_belief(self, belief: str, value: str):
-        self.memory["beliefs"][belief] = value
-        self.save_memory()
-
-    def update_desire(self, goal: str, status: str):
-        self.memory["desires"][goal] = status
-        self.save_memory()
-
-    def add_reflection(self, entry: str):
-        self.memory["reflections"].append(entry)
-        self.save_memory()
-
-    def update_style(self, key: str, value: str):
-        self.memory["adaptive_style"][key] = value
-        self.save_memory()
-
-    def get_memory(self) -> Dict:
-        return self.memory
-
-    def get_context_snippet(self, max_events: int = 5) -> str:
-        timeline = self.memory["timeline"][-max_events:]
-        memories = []
-
-        for item in timeline:
-            timestamp = item.get("timestamp", "")
-            user = item.get("user", "")
-            celeste = item.get("celeste", "")
-            memories.append(f"[{timestamp}] You: {user}\nCeleste: {celeste}")
-
-        for key, val in self.memory["milestones"].items():
-            memories.append(f"[FACT] {key}: {val}")
-
-        return "\n".join(memories[-max_events:])
-
-# --- NEW FUNCTION OUTSIDE THE CLASS ---
-def update_memories(user_input: str, response: str, timestamp: str):
-    """
-    Updates Celeste's memory with new conversation turns.
-    """
-    mem = MemoryManager("celeste")
-    mem.add_timeline_event(user_input, response, timestamp)
-
-    # example: store milestones if keywords appear
-    if "brother" in response.lower():
-        mem.add_milestone("has_siblings", "yes")
-
-    print(f"[Memory] Updated at {timestamp}")
-
-def retrieve_relevant_memories(user_input: str) -> str:
-    """
-    For now, return the last few memories as string context.
-    Later this can be improved with keyword search or embeddings.
-    """
-    mem = MemoryManager("celeste")
-    return mem.get_context_snippet(max_events=5)
-
-def store_event(user_input: str, response: str, timestamp: Optional[str] = None):
-    """
-    Saves a new timeline entry to the memory file for Celeste.
-    """
-    mem = MemoryManager("celeste")
-    mem.add_timeline_event(user_input, response, timestamp)
-
-from datetime import datetime
-
-def get_time_context() -> str:
-    """
-    Returns a human-readable time context like:
-    'Monday morning', 'Saturday night', etc.
-    """
+def get_time_context():
     now = datetime.now()
-    day = now.strftime("%A")
-    hour = now.hour
-
-    if 5 <= hour < 12:
-        period = "morning"
-    elif 12 <= hour < 17:
-        period = "afternoon"
-    elif 17 <= hour < 21:
-        period = "evening"
-    else:
-        period = "night"
-
-    return f"{day} {period}"
+    period = 'morning' if 5 <= now.hour < 12 else 'afternoon' if 12 <= now.hour < 17 else 'evening' if 17 <= now.hour < 21 else 'night'
+    return f"{now.strftime('%A')} {period}"

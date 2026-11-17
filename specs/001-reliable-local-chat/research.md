@@ -14,4 +14,4 @@ Research basis: direct static inspection of the recovered source on 2026-11-04. 
 | Which dependencies? | Retain recovery freeze; introduce reviewed lightweight test requirements as an implementation task | Installing the entire old ML stack in CI is unnecessary for fake inference |
 | What about factual milestones/personality? | Track in M2/M3; this feature preserves legacy data and fixes mechanical reliability | Silent memory inference or persona redesign should not be smuggled into baseline repair |
 
-No hardware benchmarks, model selection, dependency vulnerability audit or private-history migration tests were conducted. Open implementation evidence: native runtime setup, failure-injection results, frontend/browser behavior and the manual model-backed smoke test.
+No hardware benchmarks, model selection, dependency vulnerability audit or private-history migration tests were conducted. The original open evidence is now tracked in [verification.md](verification.md): automated failure injection, synthetic browser and explicit native-model/process-restart checks passed on 2026-11-17; reviewed delivery remains pending.
