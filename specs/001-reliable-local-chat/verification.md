@@ -44,8 +44,10 @@ This gate proves the tested model/runtime exchange and durable history reload, n
 
 ## Delivery gate (T021)
 
-**PENDING:** existing implementation changes predate this verification pass and remain uncommitted. A temporary staging snapshot passed repository safeguards and staged whitespace checks, including M1 and new MVP planning files; the original user staging area was preserved. Reviewed PR/merge is still required. Do not mark M1 delivered/merged, infer remote CI success, or conflate planning artifacts for later MVP features with implementation.
+**PENDING REVIEW:** the verified implementation and MVP plans are now committed as `d895585` in [PR #7](https://github.com/LYF-FC/incanta/pull/7), following the owner's request. A temporary staging snapshot passed repository safeguards and staged whitespace checks, including M1 and new MVP planning files; the original user staging area was preserved. PR #7 is open; reviewer decision/merge is still required. Do not mark M1 delivered/merged, infer remote CI success, or conflate planning artifacts for later MVP features with implementation.
 
 ## Scope limits
 
 M1 preserves a readable durable timeline; it does not restore recent in-memory dialogue, gauges or relationship state after process restart. Full per-conversation continuity belongs to the next MVP feature. Factual-memory quality, personality prompt integration, session isolation, live rendering and notifications remain unimplemented.
+
+**Hosted check follow-up:** PR #7 jobs were rejected before any runner/test steps because GitHub reported an account billing/spending-limit issue. Local pass results above remain distinct; no hosted CI success is claimed and no billing setting was changed.

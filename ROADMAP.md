@@ -2,14 +2,14 @@
 
 Updated 2026-11-17. Priorities are ordered by dependency, not calendar promises. This roadmap covers Incanta as a local character/conversation project, with Butler remaining a separate production platform.
 
-**Current focus:** M1, reliable local chat. M0 provides the repository workflow; it does not make the recovered application production-ready.
+**Current focus:** review M1 PR #7 and the stacked 002 conversation/memory implementation; complete owner-reviewed dialogue acceptance. M0/CI do not make the app production-ready.
 
 | Milestone | Status | Outcome | Exit gate |
 | --- | --- | --- | --- |
 | M0 — Development foundation | Complete | Recovered source, audit, Spec Kit, documentation, CI and contribution workflow | Repository checks pass and first implementation has a coherent specification/plan/task list |
 | M1 — Reliable local chat | Automated/browser/native verification passed; reviewed delivery pending | Predictable startup, working status/chat UI, one memory event per successful turn, meaningful emotions | All [001 acceptance criteria](specs/001-reliable-local-chat/spec.md) pass with a fake inference adapter; one documented manual local-model smoke test passes |
-| M2 — Memory and proactive dialogue | Planned; depends on M1 | Relevant callbacks, natural follow-ups, explicit memory controls | Synthetic retrieval tests, callback provenance, no fabricated memories, inspect/delete/export and no background messages by default |
-| M3 — Personality and session coherence | Planned; depends on M1, memory work aligns with M2 | Validated character configuration and isolated sessions | Character values affect prompts; invalid configuration is handled; two test sessions cannot leak history or state |
+| M2 — Memory and proactive dialogue | Memory controls implemented for review in 002; proactive work still planned | Relevant callbacks, natural follow-ups, explicit memory controls | Synthetic retrieval tests, callback provenance, no fabricated memories, inspect/delete/export and no background messages by default |
+| M3 — Personality and session coherence | Implemented for review in 002; owner acceptance pending | Validated character configuration and isolated sessions | Character values affect prompts; invalid configuration is handled; two test sessions cannot leak history or state |
 | M4 — Optional visuals | Planned; depends on M1 and M3 | Optional local ComfyUI adapter and expression-aware display | Chat remains usable with visuals off/unavailable; private output stays local; adapter contract and fake integration tests pass |
 | M5 — Reproducible local release | Planned; depends on selected M2–M4 scope | Documented, repeatable Mac setup and tested backup/restore | Fresh-machine setup, external-SSD model path, dependency review and restore rehearsal documented before tagging a release |
 
@@ -53,7 +53,7 @@ Product scope is sufficiently defined to author the subsequent feature specifica
 
 ### Spec Kit MVP implementation backlog
 
-Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. All new implementation tasks are unchecked. Planning is complete; the features below are not implemented. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
+Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 has 21 completed implementation tasks and two open acceptance/delivery tasks; the 60 tasks in 003–005 remain unchecked. Planning is complete. Feature 002 is implemented for review with owner acceptance pending; 003–005 remain planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
 
 | Order | Feature | Deliverable | Tasks | Dependency |
 | --- | --- | --- | --- | --- |
@@ -76,7 +76,7 @@ The 83 tasks cover 39 functional requirements and 19 success criteria. Each feat
 
 Issues coordinate work; feature artifacts own detailed requirements and task status. All five application milestones remain open.
 
-## M1: the next implementation
+## M1 baseline (review pending)
 
 The detailed work is in [specification 001](specs/001-reliable-local-chat/spec.md), [implementation plan](specs/001-reliable-local-chat/plan.md), and [tasks](specs/001-reliable-local-chat/tasks.md). The scope is deliberately one baseline repair:
 
@@ -100,3 +100,9 @@ M5 should replace the historical dependency freeze with reviewed direct/runtime 
 Each feature gets a numbered directory in `specs/`, acceptance criteria, a plan, tasks and a pull request. The feature directory owns detailed requirements; this roadmap owns sequencing. GitHub issues may reference those files rather than duplicate every task. No completion checkbox is evidence of an application test unless its result is recorded.
 
 Cloud inference, public hosting, household production integration, multi-user access and framework rewrites require separate specifications; they are outside this restart. Estimates and dates are added only when implementation evidence supports them.
+
+## Implementation follow-up — 002
+
+The owner requested committing M1/plans and opening a PR before starting 002. Commit `d895585` is in [PR #7](https://github.com/LYF-FC/incanta/pull/7); no merge is implied. The existing 002 branch is stacked on that baseline. [002 verification](specs/002-companion-conversations/verification.md) records implemented per-chat setup/restoration, canonical shared facts, memory controls and explicit non-destructive import, with 47 passing Python tests, 11 frontend tests, synthetic browser checks and a short native structured-message/process-reload smoke. T022 owner-reviewed 30-minute dialogue and T023 reviewed delivery remain open. No ComfyUI/notifications/release backup tooling is implemented.
+
+GitHub-hosted jobs for PR #7 could not start due to an account billing/spending-limit issue. This is distinct from local test results and is not reported as hosted CI success. No billing/payment setting was changed.

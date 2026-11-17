@@ -21,7 +21,7 @@ class AppCase(unittest.TestCase):
 
     def make_app(self, settings=None):
         module = importlib.import_module("frontend_app")
-        return module.create_app(settings=settings or self.settings, inference=self.fake)
+        return module.create_app(settings=settings or self.settings, inference=self.fake, legacy=True)
 
 
 class StartupTests(AppCase):
@@ -45,7 +45,7 @@ assert 'llama_cpp' not in sys.modules
         settings = replace(self.settings, model_path=Path(self.tmp.name)/"absent.gguf",
                            personality_path=Path(self.tmp.name)/"absent.json")
         from frontend_app import create_app
-        app = create_app(settings=settings)
+        app = create_app(settings=settings, legacy=True)
         client = app.test_client()
         self.assertEqual(client.get('/').status_code, 200)
         state = client.get('/api/status').json
@@ -73,7 +73,7 @@ assert 'llama_cpp' not in sys.modules
         self.assertIn('invalid_configuration', app.test_client().get('/api/status').json['issues'])
         self.assertEqual(app.test_client().post('/api/chat', json={'message':'hello'}).status_code, 503)
         from frontend_app import create_app
-        app = create_app(settings=replace(self.settings, model_path=Path('/missing/model.gguf')))
+        app = create_app(settings=replace(self.settings, model_path=Path('/missing/model.gguf')), legacy=True)
         self.assertEqual(app.test_client().post('/api/chat', json={'message':'hello'}).json['error']['code'], 'model_unavailable')
         self.assertFalse(self.settings.data_dir.exists())
 

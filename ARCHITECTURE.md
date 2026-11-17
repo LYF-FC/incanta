@@ -1,34 +1,40 @@
 # Architecture
 
-## Active M1 implementation
+## Active companion implementation (002)
 
 ```mermaid
 flowchart LR
-    Browser[HTML and plain JavaScript] --> Flask[Flask app factory]
-    Flask --> Engine[One ChatEngine and processing lock]
-    Engine --> Adapter[Lazy local inference adapter]
-    Adapter --> Model[Configured GGUF model]
-    Engine --> Gauges[Gauge rules with Neutral fallback]
-    Engine --> Memory[Atomic JSON event writer]
-    Memory --> Disk[Private configured histories]
+    Browser[HTML and plain JavaScript] --> Flask[Local Flask app factory]
+    Flask --> Service[Conversation service and generation lock]
+    Service --> Store[SQLite conversations and turns]
+    Service --> Facts[Canonical facts and explicit grants]
+    Service --> Adapter[Lazy local inference adapter]
+    Adapter --> Model[Configured GGUF]
+    Flask --> Import[Explicit legacy preview and import]
+    Import --> Copy[Private exact original copy]
+    Import --> Store
 ```
 
-`frontend_app.create_app` wires settings, injectable inference and one state owner without reading private assets. Status checks configured availability without loading the model; the first valid chat request loads it lazily. Configured model state and inference readiness are separate from a guarantee that generation succeeds.
+`frontend_app.create_app()` constructs injectable services without reading private assets or opening/creating the database. Status checks do not load the model. Empty conversation listing does not create a database. `ConversationStore` opens one connection per operation, enables foreign keys and full synchronous writes, and validates schema version; it never resets an existing unreadable database. Schema creation occurs on explicit first write. One app process is supported.
 
-The engine validates input, rejects overlapping turns, loads character/history, constructs a prompt and generates tentative state. It appends one event through a same-directory temporary file, flush/fsync and atomic replacement, then publishes state with one assignment. Failed generation or persistence preserves prior committed state/history. Status can still respond while a turn is processing.
+`ConversationService.process` validates message/request/conversation IDs, takes one nonblocking generation lock, snapshots settings/context revisions and scoped facts/dialogue, then closes the read transaction before inference. Structured messages contain the selected personality, relationship and content boundaries. A conservative UTF-8 byte budget reserves output/format overhead, selects fitting current facts and trims oldest turns. Oversized irreducible setup/message returns a controlled error.
 
-The browser shares small rendering/request helpers with Node tests. Conversation text uses text nodes, not HTML parsing. It checks HTTP status, handles failure and restores controls in a finally block. A late status response cannot overwrite a newer chat state's gauges.
+After generation, a write transaction rechecks revisions and atomically commits one turn plus gauges/emotion. Same request UUID/message replays the committed response without generation; another message with that identifier conflicts. Fact/settings edits can proceed during inference and invalidate its pending commit. Stale output is never saved as a current successful turn.
 
-## Supported scope
+`FactStore` owns canonical facts and explicit grants. Only the selected conversation's granted current facts enter retrieval; no cross-chat transcript/personality/relationship sharing occurs. Corrections update one record. Deletion removes content and grants, leaving only a content-free tombstone; recipients' context revisions change transactionally. Historical turns and older backups are not rewritten. There is no automatic generated-fact extraction or sibling heuristic in this active path.
 
-One local owner/process and active conversation. Multiple workers, session isolation, request idempotency across manual retries and durable gauge/recent-dialogue restoration are not implemented. File replacement is not a backup, full power-loss guarantee or multi-process lock. Native-library crashes are outside Python exception recovery.
+`LegacyImporter` reads one configured source only after preview. Confirmation revalidates its checksum, atomically preserves exact bytes (including unknown fields), and imports a conversation/turns/checksum record transactionally. Original duplicates are retained. Repeated confirmation cannot duplicate a committed import. Preview tokens are local, bounded and expire; corrupt/changed sources and backup failures preserve originals.
 
-`core/state.py` remains an inactive legacy alternative; it does not own active chat state. The active gauge engine retains its existing non-neutral order with Neutral moved to the end. Soft variation is injectable for deterministic tests.
+## Browser and HTTP boundaries
 
-## Deferred components
+The plain-JavaScript UI provides a short setup form, conversation switch/resume, literal text transcript, memory inspect/correct/delete/sharing controls and explicit import confirmation. Browser storage contains only the last selected opaque conversation ID. Transport helpers retain request IDs for explicit retry and reject obsolete view responses after chat switches.
 
-Personality JSON must be a readable object, but its fields still do not drive the prompt; that schema/integration is M3. Query-aware retrieval, factual-memory heuristics and retention/recovery policy are M2. `backend/image_gen.py` still writes metadata only and is not a chat/ComfyUI adapter. React, FastAPI, cloud inference and database migrations are not introduced.
+Mutations require an exact local Origin, signed local session and CSRF token from `/api/bootstrap`; there is no new multi-user identity service or CORS expansion. Cookies contain no private dialogue/settings. Session tokens rotate on process restart; reload bootstraps again. API/error responses are no-store with safe error categories. The status endpoint does not promise model generation success merely because assets are available.
 
-## Data and verification
+## Compatibility and deferred work
 
-Model, personality and history locations are local environment settings, including SSD paths; private contents never belong in source/CI. Existing stored fields and duplicate entries are preserved. Tests use fake inference, synthetic configuration and temporary histories. See [HTTP contract](specs/001-reliable-local-chat/contracts/http.md), [verification](specs/001-reliable-local-chat/verification.md) and [decisions](DECISIONS.md). Reuse in Butler needs a separate security/dependency/persistence review.
+`create_app(legacy=True)` is an explicit M1 test/smoke compatibility harness. Its old JSON engine/contract is not the default running app; default `/api/chat` requires conversation selection. M1 tests select this harness, while new 002 suites test the active factory. `core/state.py` remains inactive. The gauge rules retain documented existing precedence with Neutral fallback.
+
+Images remain metadata-only in `backend/image_gen.py`. ComfyUI, model-resource arbitration, proactive follow-ups and native Mac notifications are planned in 003/004. Full consistent backup/restore tooling is 005. Atomic SQLite transactions and preserved import copies do not replace application backups or certify power-loss behavior. Native crashes, model obedience/quality and multi-process coordination need separate evidence/design.
+
+See [002 contract](specs/002-companion-conversations/contracts/http.md), [verification](specs/002-companion-conversations/verification.md) and [decisions](DECISIONS.md). Butler reuse remains a separate review.

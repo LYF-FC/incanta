@@ -12,6 +12,8 @@ class Settings:
     model_path: Path = ROOT / "models/Nous-Hermes-2-Mistral-7B-DPO.Q4_K_S.gguf"
     personality_path: Path = ROOT / "backend/personalities/celeste.json"
     data_dir: Path = ROOT / "chat_histories"
+    database_path: Path | None = None
+    import_path: Path | None = None
     host: str = "127.0.0.1"
     port: int = 5001
     context_length: int = 4096
@@ -32,7 +34,7 @@ class Settings:
         env = os.environ if environ is None else environ
         values = {}
         failed = False
-        for name in ["model_path", "personality_path", "data_dir"]:
+        for name in ["model_path", "personality_path", "data_dir", "database_path", "import_path"]:
             if f"INCANTA_{name.upper()}" in env:
                 try:
                     raw = env[f"INCANTA_{name.upper()}"]

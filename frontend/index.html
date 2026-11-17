@@ -2,41 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Incanta - Chat with Celeste</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incanta — Conversations with Celeste</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
+  <main class="container">
     <header>
       <h1>Incanta</h1>
-      <h2>Chat with Celeste</h2>
+      <h2>Conversations with Celeste</h2>
       <p id="readiness-label" role="status">Checking readiness…</p>
       <button id="refresh-status" type="button">Check readiness</button>
-      <div id="emotion-label">Current Emotion: Neutral</div>
     </header>
-
-    <section id="chat-messages" class="chat-box" aria-live="polite"></section>
-
-    <form id="chat-form">
-      <input type="text" id="chat-input" aria-label="Message" placeholder="Say something to Celeste..." autocomplete="off" />
-      <button id="send-button" type="submit">Send</button>
-    </form>
-
+    <section class="conversation-toolbar" aria-label="Conversations">
+      <label for="conversation-select">Conversation</label>
+      <select id="conversation-select"><option value="">Create your first conversation</option></select>
+      <button id="new-conversation" type="button">New conversation</button>
+      <button id="edit-settings" type="button" disabled>Edit setup</button>
+    </section>
+    <section id="setup-panel">
+      <h3 id="setup-heading">Set up a conversation</h3>
+      <p>Each conversation has its own personality, relationship, memories and emotional state. Model responses may not always follow your settings perfectly.</p>
+      <form id="setup-form">
+        <label>Conversation name<input id="setup-title" name="title" maxlength="120" required placeholder="A conversation with Celeste" /></label>
+        <label>Personality<textarea id="setup-personality" name="personality" maxlength="2000" required placeholder="Describe how Celeste speaks and behaves."></textarea></label>
+        <label>Relationship<textarea id="setup-relationship" name="relationship" maxlength="1000" placeholder="Describe your relationship in this conversation."></textarea></label>
+        <label>Content boundaries<textarea id="setup-boundaries" name="boundaries" maxlength="2000" required placeholder="Describe your limits and preferences."></textarea></label>
+        <button id="save-setup" type="submit">Create conversation</button>
+        <button id="cancel-setup" type="button" hidden>Cancel</button>
+      </form>
+    </section>
+    <section id="conversation-panel" hidden>
+      <h3 id="conversation-heading"></h3>
+      <p id="effective-settings"></p>
+      <div id="emotion-label">Current emotion: Neutral</div>
+      <button id="load-earlier" type="button" hidden>Load earlier exchanges</button>
+      <section id="chat-messages" class="chat-box" aria-label="Conversation transcript" aria-live="polite"></section>
+      <form id="chat-form">
+        <input type="text" id="chat-input" aria-label="Message" placeholder="Say something to Celeste…" autocomplete="off" maxlength="8000" required />
+        <button id="send-button" type="submit">Send</button>
+      </form>
+      <p>Replies are saved before they appear. If a request fails, an explicit retry retrieves the same saved turn when possible.</p>
+      <button id="toggle-gauges" type="button" aria-expanded="false" aria-controls="gauge-container">Show gauges</button>
+      <div id="gauge-container" hidden></div>
+      <details id="memory-panel">
+        <summary>Memories and sharing</summary>
+        <p>Save selected facts explicitly. Corrections and deletions apply everywhere a fact is shared. Deleting a memory removes it from future fact retrieval; its original transcript and older backups remain.</p>
+        <form id="memory-form">
+          <label>New memory<textarea id="memory-text" maxlength="2000" required></textarea></label>
+          <label>Source<select id="memory-source"><option value="">Owner note</option></select></label>
+          <button type="submit">Save memory</button>
+        </form>
+        <div id="memory-list"></div>
+      </details>
+    </section>
+    <details id="import-panel" hidden>
+      <summary>Import a selected legacy history</summary>
+      <p>Only the file explicitly configured in local import settings is read. Complete the short setup form above first. Preview does not modify the source. Confirmation preserves an exact local copy including unknown fields; duplicate exchanges are imported as they are.</p>
+      <button id="preview-import" type="button">Preview configured history</button>
+      <p id="import-preview" role="status"></p>
+      <button id="confirm-import" type="button" hidden>Confirm import and preserve original</button>
+    </details>
     <p id="chat-error" role="alert"></p>
-    <button id="toggle-gauges" aria-expanded="true" aria-controls="gauge-container">Hide Gauges</button>
-    <div id="gauge-container">
-      <div class="gauge"><div class="gauge-fill" id="gauge-Trust">Trust: 0</div></div>
-      <div class="gauge"><div class="gauge-fill" id="gauge-Intimacy">Intimacy: 0</div></div>
-      <div class="gauge"><div class="gauge-fill" id="gauge-Curiosity">Curiosity: 0</div></div>
-      <div class="gauge"><div class="gauge-fill" id="gauge-Affection">Affection: 0</div></div>
-      <div class="gauge"><div class="gauge-fill" id="gauge-Confidence">Confidence: 0</div></div>
-      <div class="gauge"><div class="gauge-fill" id="gauge-Confusion">Confusion: 0</div></div>
-      <div class="gauge"><div class="gauge-fill" id="gauge-Arousal">Arousal: 0</div></div>
-    </div>
-  </div>
-
-  <script src="chat_helpers.js"></script>
-  <script src="app.js"></script>
+    <script src="chat_helpers.js"></script>
+    <script src="conversation_helpers.js"></script>
+    <script src="memory_controls.js"></script>
+    <script src="app.js"></script>
+  </main>
 </body>
 </html>

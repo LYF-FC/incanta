@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-17
 
-**Status**: Planned; not implemented. Depends on M1's verified runtime and delivery gates.
+**Status**: Implemented for review on its existing branch, stacked on verified M1 PR #7 at the owner's request. Automated/browser/short-native checks pass; owner-reviewed 30-minute acceptance and reviewed delivery remain pending. See [verification.md](verification.md).
 
 ## User Scenarios & Testing *(mandatory)*
 

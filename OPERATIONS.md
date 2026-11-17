@@ -17,3 +17,9 @@ No automated migration/reset/cleanup of old memories is authorized by this found
 ## Releases and reuse
 
 Do not tag a working release solely because documentation/CI passes. Complete its acceptance gates, a model-backed smoke test and backup/restore evidence first. Before extracting code for Butler, review dependencies, storage, authentication, audit and permissions independently. No public deployment, hosting or automatic model download is configured.
+
+## Companion conversations (002)
+
+The default app restores independent conversations from SQLite. Create/select chats and use their setup and memory controls; shared facts update canonically. The old M1 JSON engine is retained only for explicit compatibility tests. Legacy import requires one configured local source plus preview and confirmation; its original is preserved unchanged. Preserve corrupt storage for repair. Full consistent backup/restore tooling remains 005, and the previous M1 description above is historical rather than the current persistence design.
+
+M1 and plans are committed in review PR #7. Feature 002 is stacked separately for review; no automatic merge/tag or production Butler integration is performed. Hosted GitHub checks may require the repository owner's account billing/spending-limit issue to be resolved; local test results are recorded independently and must not be presented as hosted CI success.

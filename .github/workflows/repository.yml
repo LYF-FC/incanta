@@ -61,4 +61,6 @@ jobs:
         run: |
           node --check frontend/app.js
           node --check frontend/chat_helpers.js
-          node --test tests/frontend.test.js
+          node --check frontend/conversation_helpers.js
+          node --check frontend/memory_controls.js
+          node --test tests/*.test.js

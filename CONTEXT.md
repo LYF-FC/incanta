@@ -27,3 +27,7 @@ On 2026-11-17, M1's 32 Python tests, six frontend tests, synthetic browser journ
 - [Decisions](DECISIONS.md): durable architectural/governance choices.
 
 Private character definitions, conversation history, models and generated assets remain local. Public or private repository status does not change that rule.
+
+## Companion implementation follow-up
+
+M1 and the agreed MVP plans are committed as `d895585` in review PR #7. At the owner's explicit request, 002 is implemented on its existing branch without waiting for or performing a merge. The active app now uses per-conversation setup, durable SQLite transcript/state, explicitly shared canonical facts and inspect/correct/delete controls. A configured legacy source can be previewed/confirmed with exact-byte preservation and idempotent import; no private source was imported during development. Automated/browser/short-native checks pass; owner-reviewed 30-minute acceptance and reviewed delivery remain pending. The earlier planning descriptions are historical decisions, not claims that 003–005 are implemented.
