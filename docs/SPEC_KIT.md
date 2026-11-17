@@ -23,6 +23,8 @@ Codex runtime events are disabled: the workflow runs on explicit skill invocatio
 
 The constitution and first feature artifacts are project-authored. Upstream core templates and installed skills are retained unchanged. `AGENTS.md` is project guidance, not a generated replacement for the constitution.
 
+On 2026-11-17, the Git extension's supported `branch_prefix` setting was changed to `codex` to match the workspace's branch convention. The existing 001 branch is retained. This is project configuration, not a modification to upstream skills/scripts or their license. MVP planning uses individual specify/plan/tasks steps and explicit feature-directory selection; it does not run the full implementation workflow. Optional auto-commit hooks remain disabled.
+
 ## Verify
 
 ```sh

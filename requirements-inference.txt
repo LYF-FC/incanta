@@ -1,0 +1,2 @@
+# Optional local inference. Install requirements-test.txt for the web runtime first.
+llama-cpp-python==0.3.36

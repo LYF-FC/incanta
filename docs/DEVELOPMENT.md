@@ -24,12 +24,10 @@ The Git extension creates numbered feature branches. Core specs live under `spec
 
 ## Resume the first feature
 
-Specification `001-reliable-local-chat` was hand-seeded from the installed upstream templates during bootstrap. Its specification, research, design, contracts, task list and planning review are ready for implementation review. No application task has been completed by this setup.
+Specification `001-reliable-local-chat` was hand-seeded from the installed upstream templates during bootstrap. Implementation is present on its existing branch. Read its tasks and verification record: automated, synthetic browser and explicit native-model/process-restart checks pass; reviewed delivery remains pending.
 
 ```sh
-git switch main
-git pull --ff-only
-git switch -c 001-reliable-local-chat
+git switch 001-reliable-local-chat
 export SPECIFY_FEATURE_DIRECTORY=specs/001-reliable-local-chat
 bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
 ```
@@ -49,7 +47,7 @@ python3 scripts/check_repository.py
 git diff --cached --check
 ```
 
-The current unit suite protects repository tooling. Add application tests as specified in 001; do not describe this suite as application coverage. GitHub CI runs on pull requests and pushes to main with read-only permissions, pinned action commits and no private/model assets.
+The current suites protect repository tooling and application behavior with fake inference and temporary data; they do not prove native-model compatibility. GitHub CI runs on pull requests and pushes to main with read-only permissions, pinned action commits and no private/model assets.
 
 ## Review and merge
 

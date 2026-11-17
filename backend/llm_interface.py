@@ -1,84 +1,80 @@
-from llama_cpp import Llama
-from backend.emotion_mapping import emotion_behavior_map
+"""Pure prompt construction and an explicitly lazy, local-only inference adapter."""
+import importlib.util
 import os
+from backend.emotion_mapping import emotion_behavior_map
+from backend.errors import AppError
 
-# Path to the GGUF model file
-MODEL_PATH = os.path.join("models", "Nous-Hermes-2-Mistral-7B-DPO.Q4_K_S.gguf")
 
-# Initialize the LLaMA model
-llm = Llama(
-    model_path=MODEL_PATH,
-    n_ctx=4096,
-    n_threads=8,
-    n_gpu_layers=32,
-    use_mlock=True,
-    use_mmap=True,
-    chat_format="chatml",  # Required for Nous-Hermes-2
-)
-
-# Holds recent dialogue for prompt continuity
-conversation_history = []
-
-def format_chat_input(user_input, personality, memory_context, gauges, timestamp, time_context, emotion):
-    """
-    Builds the structured prompt with:
-    - Personality traits
-    - Emotional state and time context
-    - Stored memory facts
-    - Current emotional gauges
-    - Inner thoughts, spoken response, and continuity
-    """
-    gauge_text = ", ".join([f"{k}: {v}" for k, v in gauges.items()])
-    behavior_style = emotion_behavior_map.get(emotion, "")
-
-    system_prompt = f"""
-You are Celeste, an 18-year-old girl who is shy but warm, expressive, and curious.
-You're evolving over time, storing memories, building trust, and forming relationships.
-You have emotions, memories, and a personality.
-You store important things, react to situations, and express yourself based on your current state.
-Always stay consistent with what you've previously said and experienced.
-
+def format_chat_input(user_input, personality, memory_context, gauges, timestamp,
+                      time_context, emotion, history=()):
+    # Personality schema/prompt integration is M3; retain the baseline persona.
+    gauge_text = ', '.join(f'{key}: {value}' for key, value in gauges.items())
+    prompt = f'''You are Celeste, a shy but warm, expressive and curious young woman.
+Stay consistent with previously shared events and the current conversation.
 Current time: {timestamp}
 Context: {time_context}
 Current emotion: {emotion}
 Emotional gauges: {gauge_text}
-Emotional behavior: {behavior_style}
-
+Emotional behavior: {emotion_behavior_map.get(emotion, '')}
 Long-term memory summary:
 {memory_context}
-
 Recent dialogue:
-"""
+'''
+    for entry in history[-5:]:
+        prompt += f"User: {entry['user']}\nCeleste: {entry['celeste']}\n"
+    return (prompt + f'User: {user_input}\nCeleste:').strip()
 
-    for entry in conversation_history[-5:]:
-        system_prompt += f"User: {entry['user']}\nCeleste: {entry['celeste']}\n"
 
-    system_prompt += f"User: {user_input}\nCeleste:"
-    return system_prompt.strip()
+class LocalInference:
+    def __init__(self, settings, factory=None):
+        self.settings = settings
+        self._factory = factory
+        self._model = None
+        self._load_failed = False
 
-def generate_response(prompt: str):
-    """
-    Generate a response using the local LLaMA model (chatml format).
-    """
-    output = llm.create_chat_completion(
-        messages=[
-            {"role": "system", "content": "You are Celeste, a shy but evolving young woman."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.7,
-        top_p=0.95,
-        top_k=40,
-        repeat_penalty=1.1,
-        stop=["<|im_end|>"]
-    )
+    def _assets_available(self):
+        path = self.settings.model_path
+        try:
+            if not (path.is_file() and path.stat().st_size > 0 and os.access(path, os.R_OK)):
+                return False
+            return self._factory is not None or importlib.util.find_spec('llama_cpp') is not None
+        except (OSError, ImportError, ValueError):
+            return False
 
-    return output["choices"][0]["message"]["content"]
+    def state(self):
+        if not self._assets_available() or self._load_failed:
+            return 'unavailable'
+        return 'loaded' if self._model is not None else 'unloaded'
 
-def record_conversation(user_input, celeste_response):
-    """
-    Save the latest exchange in memory for short-term continuity.
-    """
-    conversation_history.append({
-        "user": user_input,
-        "celeste": celeste_response
-    })
+    def generate(self, prompt):
+        if not self._assets_available():
+            raise AppError('model_unavailable')
+        if self._model is None:
+            try:
+                factory = self._factory
+                if factory is None:
+                    from llama_cpp import Llama
+                    factory = Llama
+                self._model = factory(
+                    model_path=str(self.settings.model_path),
+                    n_ctx=self.settings.context_length, n_threads=self.settings.threads,
+                    n_gpu_layers=self.settings.gpu_layers, use_mmap=True,
+                    use_mlock=False, chat_format='chatml', verbose=False,
+                )
+                self._load_failed = False
+            except Exception:
+                self._load_failed = True
+                raise AppError('model_unavailable') from None
+        try:
+            output = self._model.create_chat_completion(
+                messages=[{'role':'system', 'content':'You are Celeste, a shy but evolving young woman.'},
+                          {'role':'user', 'content':prompt}],
+                temperature=0.7, top_p=0.95, top_k=40, repeat_penalty=1.1,
+                max_tokens=256, stop=['<|im_end|>'],
+            )
+            response = output['choices'][0]['message']['content']
+            if not isinstance(response, str) or not response.strip():
+                raise ValueError
+            return response.strip()
+        except Exception:
+            raise AppError('generation_failed') from None

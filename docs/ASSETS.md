@@ -1,19 +1,15 @@
 # Models, private data and external storage
 
-GitHub holds source and shared tooling, not every file from the original project. Never commit `.gguf`, `.safetensors`, diffusion `.bin` files, private personalities, histories, generated images, environments or archive backups.
+GitHub holds source and shared tooling, not every file from the original project. Never commit GGUF/safetensors/diffusion weights, private character definitions, histories, generated images, environments or archive backups.
 
-## Suggested ownership
+Keep one active Git checkout on the Mac and a separate private asset location, which may be an external SSD. Preserve complete diffusion-model folders/configuration/shards and complete linked cache structures. Verify copies before deleting originals and keep another backup of irreplaceable custom models, memories and character work. No original assets have been moved/deleted by this implementation.
 
-Keep one active Git checkout on the Mac. Keep a separate private asset location for models, character definitions and histories; this can be an external SSD. Keep complete diffusion-model folders, configuration files and all numbered shards together. Hugging Face caches may contain links: preserve their full structure rather than copying only apparent snapshot files.
+## Active configuration
 
-Before removing an internal copy, verify the external copy and keep another backup of irreplaceable custom models, character work and memories. Repository setup does not authorize moving/deleting originals. See [the recovery audit](SOURCE_RECOVERY.md) for duplicate-folder findings.
+`INCANTA_MODEL_PATH`, `INCANTA_PERSONALITY_PATH` and `INCANTA_DATA_DIR` configure model, character and history locations without source edits. Paths are root-anchored when relative. Shell exports are supported; `.env` is not automatically read. Use [SETUP.md](../SETUP.md) for defaults and native dependency installation.
 
-## Current application versus planned configuration
+Models load lazily on chat requests. A missing/disconnected model or invalid character file produces a controlled error and no new history. Changing environment variables requires restarting the app; reconnecting files can be followed by **Check readiness** and a manual retry. Data directories may be created on the first successful persistence attempt, but never by a status check. Existing malformed histories are not silently replaced.
 
-The recovered app expects `models/Nous-Hermes-2-Mistral-7B-DPO.Q4_K_S.gguf`, `backend/personalities/celeste.json` and `chat_histories/` relative to the working directory. It does not yet consume `.env`. Keep launching it from the repository root. An existing filesystem link can point its model folder to an SSD, but no link or move has been created by this setup.
+A successful event is written to a restrictive temporary file in the data directory and atomically replaces the prior document. One process is supported; concurrent processes or storage power loss require stronger guarantees than this baseline. Private backups remain necessary.
 
-Specification 001 plans explicit environment settings for model, personality and data paths, lazy model loading and helpful disconnected-SSD errors. Those settings are not available until that feature is implemented. Do not edit tracked code merely to embed a personal volume path into a shared commit.
-
-## Model provenance
-
-Record a model's upstream identifier/revision, filename, license and checksum privately alongside the asset. A filename alone does not establish that two weights are identical. Public base models may be downloadable again; custom fine-tunes and private configurations may not be replaceable. Model licenses are separate from source/tooling licenses.
+Record model identifier/revision/license/checksum privately with the asset. File names alone do not prove weights are identical. The source [recovery audit](SOURCE_RECOVERY.md) still records which original folders/archives contain unique material; this feature authorizes no cleanup.

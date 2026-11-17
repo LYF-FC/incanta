@@ -1,33 +1,34 @@
 # Architecture
 
-## Current implementation
+## Active M1 implementation
 
 ```mermaid
 flowchart LR
-    Browser[HTML and plain JavaScript] --> Flask[Flask routes]
-    Flask --> Chat[Chat orchestration]
-    Chat --> LLM[Local llama-cpp-python]
-    Chat --> Gauges[Gauge and emotion rules]
-    Chat --> Memory[JSON memory manager]
-    Chat --> Persona[Local personality loader]
-    Memory --> Disk[Ignored local histories]
-    LLM --> Model[Local GGUF model]
+    Browser[HTML and plain JavaScript] --> Flask[Flask app factory]
+    Flask --> Engine[One ChatEngine and processing lock]
+    Engine --> Adapter[Lazy local inference adapter]
+    Adapter --> Model[Configured GGUF model]
+    Engine --> Gauges[Gauge rules with Neutral fallback]
+    Engine --> Memory[Atomic JSON event writer]
+    Memory --> Disk[Private configured histories]
 ```
 
-`frontend_app.py` imports the chat engine, which imports and initializes the model and personality immediately. Chat state and recent history are process globals. The browser calls `/api/status` and `/api/chat`. Each successful chat currently writes the same event twice. `core/state.py` is a second, currently disconnected state implementation.
+`frontend_app.create_app` wires settings, injectable inference and one state owner without reading private assets. Status checks configured availability without loading the model; the first valid chat request loads it lazily. Configured model state and inference readiness are separate from a guarantee that generation succeeds.
 
-`backend/image_gen.py` creates image metadata and its output directory; no current route invokes a ComfyUI service. The architecture diagram shows the active chat path, not a planned image pipeline.
+The engine validates input, rejects overlapping turns, loads character/history, constructs a prompt and generates tentative state. It appends one event through a same-directory temporary file, flush/fsync and atomic replacement, then publishes state with one assignment. Failed generation or persistence preserves prior committed state/history. Status can still respond while a turn is processing.
 
-## M1 target, not yet implemented
+The browser shares small rendering/request helpers with Node tests. Conversation text uses text nodes, not HTML parsing. It checks HTTP status, handles failure and restores controls in a finally block. A late status response cannot overwrite a newer chat state's gauges.
 
-Keep the stack and introduce explicit settings, a web app factory, one session state owner, an injected inference adapter and a single memory writer. The status route should remain available before model assets are ready. Separate transport, prompt construction, state updates and persistence enough to test them with temporary storage and fake inference.
+## Supported scope
 
-See [plan 001](specs/001-reliable-local-chat/plan.md) and its [HTTP contract](specs/001-reliable-local-chat/contracts/http.md). Those documents define proposed behavior; they do not describe completed code.
+One local owner/process and active conversation. Multiple workers, session isolation, request idempotency across manual retries and durable gauge/recent-dialogue restoration are not implemented. File replacement is not a backup, full power-loss guarantee or multi-process lock. Native-library crashes are outside Python exception recovery.
 
-## Data boundaries
+`core/state.py` remains an inactive legacy alternative; it does not own active chat state. The active gauge engine retains its existing non-neutral order with Neutral moved to the end. Soft variation is injectable for deterministic tests.
 
-Source, synthetic examples, feature specs and shared development tooling belong in Git. Private personality data, local conversation state, weights, caches and generated media do not. No production family data should depend on Incanta. External SSD paths are configuration, not repository-owned assets.
+## Deferred components
 
-## Later decisions
+Personality JSON must be a readable object, but its fields still do not drive the prompt; that schema/integration is M3. Query-aware retrieval, factual-memory heuristics and retention/recovery policy are M2. `backend/image_gen.py` still writes metadata only and is not a chat/ComfyUI adapter. React, FastAPI, cloud inference and database migrations are not introduced.
 
-Memory migrations, multiple sessions, personality validation and optional ComfyUI each need their own specification. React, FastAPI, cloud services and database changes are not implied by this diagram or roadmap. Reuse in Butler requires a separate dependency, security and persistence audit.
+## Data and verification
+
+Model, personality and history locations are local environment settings, including SSD paths; private contents never belong in source/CI. Existing stored fields and duplicate entries are preserved. Tests use fake inference, synthetic configuration and temporary histories. See [HTTP contract](specs/001-reliable-local-chat/contracts/http.md), [verification](specs/001-reliable-local-chat/verification.md) and [decisions](DECISIONS.md). Reuse in Butler needs a separate security/dependency/persistence review.

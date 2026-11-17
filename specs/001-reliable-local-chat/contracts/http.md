@@ -1,6 +1,6 @@
-# Proposed local HTTP contract
+# Local HTTP contract
 
-This is the target contract for specification 001, not the recovered implementation. Responses are JSON; asset routes continue serving the local interface. No CORS expansion, external API or authentication service is introduced.
+This is the implemented contract for specification 001, verified with synthetic tests; see [verification](../verification.md). Responses are JSON; asset routes continue serving the local interface. No CORS expansion, external API or authentication service is introduced.
 
 ## GET /api/status
 

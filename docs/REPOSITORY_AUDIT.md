@@ -32,3 +32,9 @@ Repository privacy guard regression tests, Python parsing, JavaScript/Bash synta
 ## Next action
 
 Implement [001-reliable-local-chat](../specs/001-reliable-local-chat/spec.md) against its task list. Retain known limitations until tests and smoke-test evidence justify closing them. Re-run this audit when architecture or milestone scope changes; do not silently erase unresolved findings.
+
+## Verification follow-up — 2026-11-17
+
+The findings above describe the recovery baseline and are retained for provenance. Current working-tree M1 changes address A01–A08 and A14 mechanically, plus single-process state ownership from A11; 32 Python/six frontend tests and the synthetic browser journey pass. See [verification 001](../specs/001-reliable-local-chat/verification.md) for environment and evidence limits. An explicit owned-model exchange and separate-process history reload also passed after granting native-runtime access; the restricted attempt failed to create a Metal command queue. This does not mean changes are merged: the reviewed-delivery gate remains open.
+
+A09 personality prompt integration, A10 factual-memory quality, A11 session isolation, A12 actual rendering and A13 full dependency review remain later MVP work. Durable timeline reload is verified synthetically; recent conversation state restoration is outside M1. The owner-approved MVP in [the roadmap](../ROADMAP.md#owner-defined-companion-mvp) adds these capabilities through separately planned increments; it does not retroactively expand 001.
