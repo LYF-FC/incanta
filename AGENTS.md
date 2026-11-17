@@ -4,7 +4,7 @@ Read `README.md`, `CONTEXT.md`, `.specify/memory/constitution.md`, `ROADMAP.md` 
 
 ## Scope and evidence
 
-Keep the existing Flask/plain JavaScript stack unless a specification changes it. Never claim React, FastAPI or live ComfyUI is implemented here. M1 is delivered through merged PR #7; 002 continues on its existing branch/PR #8 with the owner's green-CI merge authorization. Read each feature's tasks and verification record before claiming completion; owner dialogue acceptance remains explicit in issue #9. Do not treat planning checklists as proof of runtime verification.
+Keep the existing Flask/plain JavaScript stack unless a specification changes it. Never claim React, FastAPI or live ComfyUI is implemented here. M1 and feature 002 are delivered through merged PRs #7/#8 after green CI and owner-authorized review/merge. Read each feature's tasks and verification record before claiming completion; owner dialogue acceptance remains explicit in issue #9. Do not treat planning checklists as proof of runtime verification.
 
 Use `./scripts/specify.sh` for CLI commands that upstream instructions refer to as `specify`; no global CLI install is assumed.
 

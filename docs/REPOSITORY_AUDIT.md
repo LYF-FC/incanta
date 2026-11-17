@@ -46,3 +46,5 @@ The active path now addresses A09 through per-chat prompt settings, A10 through 
 ## PR and CI review — 2026-11-17
 
 Repository visibility is now public by the owner's decision; the private-repository/plan findings in the dated recovery baseline above are historical. Both original PR #7/#8 job sets were blocked before allocation by GitHub account billing/spending-limit checks, then passed on rerun attempt 2 after the visibility change. No workflow bypass or model-backed CI was introduced. 002 review fixes cover pending chat selection, failed first database setup and malformed persisted state. See its verification record for regression evidence and the unchanged owner acceptance/delivery gates.
+
+**Final delivery outcome:** the original heads passed reruns, the reviewed 002 correction commit 6f955c2 passed workflow 44177431802, and PRs #7/#8 merged with explicit owner approval. Issues #1/#3 are closed for their completed original criteria. Owner dialogue-quality acceptance remains open in #9; later implementation issues #2/#4/#5 remain open. No failed CI check was bypassed and no private/model inference ran in CI.

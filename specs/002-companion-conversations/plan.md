@@ -2,7 +2,7 @@
 
 **Branch**: `codex/002-companion-conversations` | **Date**: 2026-11-17 | **Spec**: [spec.md](spec.md)
 
-**Status:** implemented for review. Dependencies: verified [001](../001-reliable-local-chat/verification.md), delivered through merged PR #7. The owner explicitly authorized stacked implementation and subsequent green-CI review/merge. See [verification](verification.md) for actual evidence and pending owner acceptance.
+**Status:** delivered through merged PR #8 after green CI and owner-authorized review/merge. Dependencies: verified [001](../001-reliable-local-chat/verification.md), delivered through merged PR #7. The owner explicitly authorized stacked implementation and subsequent green-CI review/merge. See [verification](verification.md) for actual evidence and pending owner acceptance.
 
 ## Summary
 
@@ -30,7 +30,7 @@ Retain Flask/plain JavaScript and lazy local inference. Replace process-global c
 
 ## Constitution Check
 
-Privacy: local DB and synthetic tests only. Evidence: implemented behavior and remaining acceptance are distinguished in verification.md. Specification first: FR/SC-to-task mapping below. Reproducibility: fake tests, explicit native gate. Recoverability: owner-confirmed import with preserved originals and backup. Design and synthetic implementation gates pass; no constitution exception. Owner-reviewed native quality and PR delivery remain open.
+Privacy: local DB and synthetic tests only. Evidence: implemented behavior and remaining acceptance are distinguished in verification.md. Specification first: FR/SC-to-task mapping below. Reproducibility: fake tests, explicit native gate. Recoverability: owner-confirmed import with preserved originals and backup. Design and synthetic implementation gates pass; no constitution exception. Owner-reviewed native quality remains open in issue #9; PR delivery is complete.
 
 ## Project Structure
 

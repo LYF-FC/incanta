@@ -1,6 +1,6 @@
 # Local conversation and memory contract
 
-Implemented for review; actual checks and remaining acceptance are in [verification](../verification.md). Loopback only; no CORS expansion. Existing status readiness remains. Requests require JSON, retain 64 KiB transport cap, validate UUIDs and data-model limits. Errors use M1 `{error:{code,message}}` with no private paths/content. Mutations require same-origin validation and a local session CSRF token obtained from app bootstrap; read-only status remains available without private assets. This does not introduce multi-user authentication.
+Delivered in merged PR #8; actual checks and remaining acceptance are in [verification](../verification.md). Loopback only; no CORS expansion. Existing status readiness remains. Requests require JSON, retain 64 KiB transport cap, validate UUIDs and data-model limits. Errors use M1 `{error:{code,message}}` with no private paths/content. Mutations require same-origin validation and a local session CSRF token obtained from app bootstrap; read-only status remains available without private assets. This does not introduce multi-user authentication.
 
 | Method/path | Request | Success |
 | --- | --- | --- |
