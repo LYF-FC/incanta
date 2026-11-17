@@ -24,3 +24,11 @@ No automated test downloads or uses a real model/private character/history. Test
 See [verification 001](../specs/001-reliable-local-chat/verification.md) for the actual environment/results and remaining gates. Browser verification uses a fake adapter and synthetic data. Native inference is a separate manual check, using an already-owned local model and temporary synthetic character/history, not a side effect of test discovery.
 
 Record only date, runtime/build/hardware context, model identity/checksum and pass/fail. Do not attach prompts/responses, private paths, histories or weights. A native-library crash may terminate the interpreter; a passing fake-backed suite does not prove a particular native binary/model combination is compatible. The 2026-11-17 explicit real-model/separate-process restart gate passed; reviewed delivery remains pending. Re-run native checks when the model/runtime changes.
+
+## Companion regression and acceptance (002)
+
+Run `python3 -m unittest discover -s tests -v` and `node --test tests/*.test.js` using the lightweight environment. New suites cover two-chat prompt/state isolation, two subprocess restarts, idempotent ten-turn commits, conservative context limits, wrong-origin/CSRF guards, corruption/read-only/disconnected storage, revision races, canonical facts/grants/deletion, and explicit import backup/rollback/idempotency. Frontend suites cover CSRF transport, explicit retry request identity, stale-view protection and literal memory text.
+
+Existing M1 HTTP tests use `create_app(legacy=True)` intentionally; new tests exercise the default 002 factory and `/api/conversations/{id}/turns`. `scripts/verify_local_model.py` remains the historical native baseline check. `scripts/verify_companion_model.py` explicitly checks the active structured-message/SQLite path with temporary synthetic state and an already-owned local model; it is never called by test discovery or CI. Neither short smoke proves the owner's 30-minute dialogue-quality acceptance.
+
+See [verification 002](../specs/002-companion-conversations/verification.md) for actual browser/native results, owner acceptance status and the distinction between local checks and GitHub jobs that could not start.

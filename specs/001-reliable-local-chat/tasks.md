@@ -1,6 +1,6 @@
 # Tasks: reliable local chat
 
-**Status:** implementation in progress. **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [data model](data-model.md), [HTTP contract](contracts/http.md). Checked tasks reflect implementation/review status; verification results are in verification.md; reviewed-delivery gate remains open. `[USn]` maps to the spec's user story. Tasks run in order except explicitly independent verification preparation.
+**Status:** delivered in merged PR #7; runtime/native/hosted-CI/review gates passed. **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [data model](data-model.md), [HTTP contract](contracts/http.md). Checked tasks reflect implementation/review status; verification results are in verification.md; reviewed-delivery gate passed when PR #7 merged on 2026-11-17. `[USn]` maps to the spec's user story. Tasks run in order except explicitly independent verification preparation.
 
 ## Phase 1 — Foundation
 
@@ -40,7 +40,7 @@
 - [X] T018 Perform the synthetic browser journey and failure checks in `quickstart.md`; record outcomes without conversation contents in `verification.md`.
 - [X] T019 Update `SETUP.md`, `README.md`, `ARCHITECTURE.md`, `docs/ASSETS.md` and `docs/REPOSITORY_AUDIT.md` to match implemented settings/contracts/limitations, preserving unresolved M2/M3 findings.
 - [X] T020 Perform the explicit manual local-model/restart check in `quickstart.md`; record non-sensitive environment and pass/fail in `verification.md`. If unavailable, leave this task and M1 pending.
-- [ ] T021 Review requirements/plan/tasks and constitution again; run relevant checks and staged privacy review, open/merge the feature PR, and update `ROADMAP.md` only when all exit gates are met.
+- [X] T021 Review requirements/plan/tasks and constitution again; run relevant checks and staged privacy review, open/merge the feature PR, and update `ROADMAP.md` only when all exit gates are met.
 
 ## Traceability
 

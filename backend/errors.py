@@ -1,5 +1,14 @@
 """Public error categories; never include raw exceptions, paths or dialogue."""
 ERRORS = {
+    'not_found': (404, 'This conversation or memory is unavailable.'),
+    'forbidden': (403, 'Refresh Incanta and submit from its local page.'),
+    'revision_conflict': (409, 'This item changed. Refresh it before editing again.'),
+    'request_conflict': (409, 'This request identifier was already used for different text.'),
+    'context_changed': (409, 'Settings or memories changed during the reply. Review them and retry.'),
+    'context_too_large': (413, 'Shorten the message or character settings to fit the local model context.'),
+    'conversation_required': (400, 'Choose or create a conversation before sending a message.'),
+    'import_changed': (409, 'The selected legacy file changed. Preview it again before importing.'),
+    'import_unavailable': (400, 'Choose a readable, valid legacy history in local import settings.'),
     'invalid_configuration': (503, 'Check the local runtime settings, then restart.'),
     'model_unavailable': (503, 'Connect or configure the local model, then try again.'),
     'personality_unavailable': (503, 'Configure a readable character JSON object, then try again.'),

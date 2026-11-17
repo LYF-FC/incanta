@@ -67,8 +67,9 @@ class LocalInference:
                 raise AppError('model_unavailable') from None
         try:
             output = self._model.create_chat_completion(
-                messages=[{'role':'system', 'content':'You are Celeste, a shy but evolving young woman.'},
-                          {'role':'user', 'content':prompt}],
+                messages=prompt if isinstance(prompt, list) else [
+                    {'role':'system', 'content':'Follow the supplied local conversation instructions.'},
+                    {'role':'user', 'content':prompt}],
                 temperature=0.7, top_p=0.95, top_k=40, repeat_penalty=1.1,
                 max_tokens=256, stop=['<|im_end|>'],
             )

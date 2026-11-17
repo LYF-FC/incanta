@@ -6,13 +6,17 @@ from backend.chat_engine import ChatEngine
 from backend.errors import AppError
 
 
-def create_app(settings=None, inference=None, memory=None, rng=None):
+def create_app(settings=None, inference=None, memory=None, rng=None, legacy=False):
     settings = settings if settings is not None else Settings.from_env()
     app = Flask(__name__, static_url_path='', static_folder=str(ROOT/'frontend'),
                 template_folder=str(ROOT/'frontend'))
     app.config.update(MAX_CONTENT_LENGTH=64*1024, DEBUG=False,
                       TRUSTED_HOSTS=['localhost', '127.0.0.1', '[::1]'])
-    engine = ChatEngine(settings, inference=inference, memory=memory, rng=rng)
+    if legacy:
+        engine = ChatEngine(settings, inference=inference, memory=memory, rng=rng)
+    else:
+        from backend.conversation_service import ConversationService
+        engine = ConversationService(settings, inference=inference, rng=rng)
     app.extensions['incanta'] = engine
 
     @app.get('/')
@@ -25,6 +29,8 @@ def create_app(settings=None, inference=None, memory=None, rng=None):
 
     @app.post('/api/chat')
     def chat():
+        if not legacy:
+            raise AppError('conversation_required')
         if not request.is_json:
             raise AppError('unsupported_media_type')
         data = request.get_json()
@@ -48,6 +54,9 @@ def create_app(settings=None, inference=None, memory=None, rng=None):
         # Avoid Flask's default traceback logging of raw content/asset paths.
         return controlled_error(AppError('generation_failed'))
 
+    if not legacy:
+        from backend.conversation_routes import register_routes
+        register_routes(app, engine)
     return app
 
 

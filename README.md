@@ -2,7 +2,7 @@
 
 A private, local AI character and conversation project. Incanta combines a local language model, emotional state and persistent memory. Development is restarting from recovered source, with specifications and small, verifiable changes.
 
-**Status:** M1 reliability changes implemented; automated, synthetic-browser and explicit native-model/process-restart checks pass; delivery review remains pending ([tracking issue #1](https://github.com/LYF-FC/incanta/issues/1)). See the [verification record](specs/001-reliable-local-chat/verification.md) for completed checks and remaining gates.
+**Status:** M1 and MVP plans are delivered in [merged PR #7](https://github.com/LYF-FC/incanta/pull/7). Feature 002 conversation/memory implementation passes automated, synthetic-browser and short native checks; owner-reviewed 30-minute acceptance is tracked in [issue #9](https://github.com/LYF-FC/incanta/issues/9); PR #8 awaits its correction commit’s CI/review. See [verification 002](specs/002-companion-conversations/verification.md) and the [M1 record](specs/001-reliable-local-chat/verification.md).
 
 ## Start here
 
@@ -10,7 +10,7 @@ A private, local AI character and conversation project. Incanta combines a local
 | --- | --- |
 | Understand priorities and completion gates | [Roadmap](ROADMAP.md) |
 | Start or resume a feature | [Development workflow](docs/DEVELOPMENT.md) |
-| Pick up the first implementation | [Reliable local chat specification](specs/001-reliable-local-chat/spec.md) · [tasks](specs/001-reliable-local-chat/tasks.md) |
+| Review the current companion implementation | [Conversations/memory specification](specs/002-companion-conversations/spec.md) · [tasks](specs/002-companion-conversations/tasks.md) · [verification](specs/002-companion-conversations/verification.md) |
 | Install and run the recovered app | [Setup](SETUP.md) |
 | Understand actual code and known defects | [Architecture](ARCHITECTURE.md) · [repository audit](docs/REPOSITORY_AUDIT.md) |
 | Manage models, private files and an external SSD | [Assets and storage](docs/ASSETS.md) |
@@ -18,7 +18,9 @@ A private, local AI character and conversation project. Incanta combines a local
 
 ## What exists today
 
-Flask serves HTML/CSS/plain JavaScript at `http://127.0.0.1:5001`. `llama-cpp-python` lazily loads a configured local GGUF model on the first valid chat request. Startup/status work without private assets. Chat orchestration, heuristic gauges, emotion mappings and JSON memory are present. Personality files are loaded, but their fields are not yet used by the prompt. Image generation writes metadata only; live ComfyUI integration, React and FastAPI are not implemented in this source tree.
+Flask serves HTML/CSS/plain JavaScript at `http://127.0.0.1:5001`. Each Celeste conversation has its own short setup form, transcript, emotional state and explicitly saved facts. SQLite persists this state across restarts. Selected canonical facts can be shared between conversations; corrections/deletions propagate to every recipient's future fact retrieval. The interface includes inspect/correct/delete and sharing controls.
+
+Local GGUF inference remains lazy. A configured private personality file is no longer required by the active conversation path. Legacy JSON history is imported only through an explicitly configured source, preview and confirmation, preserving exact original bytes. The old M1 engine remains available only to its explicit compatibility tests/smoke runner. Image generation is still metadata-only; live ComfyUI, notifications, React and FastAPI are not implemented.
 
 ## Work without a model
 
@@ -27,7 +29,7 @@ Use Python 3.11 or 3.13 and Git. Install the lightweight web/test dependency; no
 ```sh
 python3 -m pip install -r requirements-test.txt
 python3 -m unittest discover -s tests -v
-node --test tests/frontend.test.js
+node --test tests/*.test.js
 python3 scripts/check_repository.py --tracked
 ```
 

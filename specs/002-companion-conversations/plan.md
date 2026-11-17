@@ -2,7 +2,7 @@
 
 **Branch**: `codex/002-companion-conversations` | **Date**: 2026-11-17 | **Spec**: [spec.md](spec.md)
 
-**Status:** planned only. Dependencies: [001](../001-reliable-local-chat/verification.md). No implementation from this planning pass.
+**Status:** implemented for review. Dependencies: verified [001](../001-reliable-local-chat/verification.md), delivered through merged PR #7. The owner explicitly authorized stacked implementation and subsequent green-CI review/merge. See [verification](verification.md) for actual evidence and pending owner acceptance.
 
 ## Summary
 
@@ -30,11 +30,11 @@ Retain Flask/plain JavaScript and lazy local inference. Replace process-global c
 
 ## Constitution Check
 
-Privacy: local DB and synthetic tests only. Evidence: all new behavior remains planned. Specification first: FR/SC-to-task mapping below. Reproducibility: fake tests, explicit native gate. Recoverability: owner-confirmed import with preserved originals and backup. All design gates pass; no constitution exception. Recheck after implementation.
+Privacy: local DB and synthetic tests only. Evidence: implemented behavior and remaining acceptance are distinguished in verification.md. Specification first: FR/SC-to-task mapping below. Reproducibility: fake tests, explicit native gate. Recoverability: owner-confirmed import with preserved originals and backup. Design and synthetic implementation gates pass; no constitution exception. Owner-reviewed native quality and PR delivery remain open.
 
 ## Project Structure
 
-`backend/conversation_store.py`, `backend/conversation_service.py`, `backend/fact_store.py`, `backend/legacy_import.py`, `backend/migrations/001_companion.sql`; modify `backend/config.py`, `backend/chat_engine.py`, `backend/llm_interface.py`, `frontend_app.py`, `frontend/app.js`, `frontend/index.html`, `frontend/style.css`; add `frontend/memory_controls.js`. Test files: `tests/test_conversations.py`, `tests/test_facts.py`, `tests/test_legacy_import.py`, `tests/conversations.test.js`. Documentation stays in this directory plus SETUP/ARCHITECTURE/ASSETS.
+`backend/conversation_routes.py`, `frontend/conversation_helpers.js`, `backend/conversation_store.py`, `backend/conversation_service.py`, `backend/fact_store.py`, `backend/legacy_import.py`, `backend/migrations/001_companion.sql`; modify `backend/config.py`, `backend/chat_engine.py`, `backend/llm_interface.py`, `frontend_app.py`, `frontend/app.js`, `frontend/index.html`, `frontend/style.css`; add `frontend/memory_controls.js`. Test files: `tests/test_conversations.py`, `tests/test_facts.py`, `tests/test_legacy_import.py`, `tests/conversations.test.js`. Documentation stays in this directory plus SETUP/ARCHITECTURE/ASSETS.
 
 ## Design and execution
 

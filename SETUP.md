@@ -11,7 +11,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-test.txt
 python -m unittest discover -s tests -v
-node --test tests/frontend.test.js
+node --test tests/*.test.js
 python frontend_app.py
 ```
 
@@ -27,38 +27,45 @@ CMAKE_ARGS='-DGGML_METAL=OFF -DGGML_NATIVE=OFF' python -m pip install --no-binar
 
 This installs software, not model weights. Downloading a model is never automatic. GPU acceleration/build variants are separate choices; no GPU performance target is promised by this baseline. See the [upstream installation guide](https://github.com/abetlen/llama-cpp-python#installation) for other platforms. On 2026-11-17, the existing 0.3.36 installation passed an explicit owned-model smoke check with CPU-default settings and access to the Mac native runtime. The restricted environment could not create a Metal command queue even with zero GPU layers. See the verification record for exact scope; this does not certify other builds or models.
 
-## Configure your assets
+## Configure the companion runtime
 
-Use synthetic character configuration for the first run:
-
-```sh
-mkdir -p backend/personalities
-cp examples/personality.example.json backend/personalities/celeste.json
-```
-
-Place an already-owned model at the default ignored path, or set an explicit local/external-SSD path. Shell environment settings are read; `.env` files are not automatically loaded.
+Set `INCANTA_MODEL_PATH` locally to an already-owned GGUF. The default remains the ignored `models/Nous-Hermes-2-Mistral-7B-DPO.Q4_K_S.gguf`; there is no automatic download or cloud fallback. Relative paths are anchored to the repository root. Shell environment variables are read; `.env` files are not loaded automatically.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| `INCANTA_MODEL_PATH` | `models/Nous-Hermes-2-Mistral-7B-DPO.Q4_K_S.gguf` | Readable, nonempty local GGUF file |
-| `INCANTA_PERSONALITY_PATH` | `backend/personalities/celeste.json` | Local JSON object; prompt schema/integration is still M3 |
-| `INCANTA_DATA_DIR` | `chat_histories/` | Writable private history directory; file name derives from character-file stem |
-| `INCANTA_HOST` | `127.0.0.1` | Loopback only: `127.0.0.1`, `localhost`, or `::1` |
-| `INCANTA_PORT` | `5001` | Port 1–65535 |
-| `INCANTA_CONTEXT_LENGTH` | `4096` | Context window, validated 128–131072 |
-| `INCANTA_GPU_LAYERS` | `0` | CPU default; -1–1000 accepted for compatible local builds |
-| `INCANTA_THREADS` | `8` | Threads, validated 1–256 |
+| `INCANTA_DATABASE_PATH` | `INCANTA_DATA_DIR/companion.sqlite` | Private conversation database; never replace an unreadable existing file |
+| `INCANTA_DATA_DIR` | `chat_histories/` | Default private data location |
+| `INCANTA_IMPORT_PATH` | unset | One owner-selected legacy JSON file, read only after explicit preview/confirm |
+| `INCANTA_MODEL_PATH` | ignored local model path above | Already-owned readable GGUF |
+| `INCANTA_HOST` / `INCANTA_PORT` | `127.0.0.1` / `5001` | Loopback-only server |
+| `INCANTA_CONTEXT_LENGTH` | `4096` | Model context window; 256 output tokens plus conservative prompt overhead reserved |
+| `INCANTA_GPU_LAYERS` / `INCANTA_THREADS` | `0` / `8` | Existing optional native inference settings |
+| `INCANTA_PERSONALITY_PATH` | legacy default | Used only by the explicit M1 compatibility harness; active chats use their setup form |
 
-Relative configured paths are anchored to the repository root, not the shell working directory. External storage must remain connected. Missing assets yield a controlled readiness/error state without downloads or remote inference. After fixing configuration, use **Check readiness** or restart when changing environment variables. The model loads only on the first valid chat request, once per app instance.
+Opening the page, listing conversations and checking readiness do not initialize inference or create a missing database. The first conversation creation initializes its schema. Create a conversation with a name, personality and content boundaries; relationship description is optional. Choose a saved conversation to restore its settings, transcript and emotional state. Model obedience to settings is evaluated by the owner, not guaranteed by the form.
 
-For a model on an SSD, export its actual path before starting the app, for example `INCANTA_MODEL_PATH='/Volumes/YourSSD/Models/your-model.gguf'`. Do not put private paths into tracked source or shared logs. The example is a placeholder, not an existing volume or a request to move files.
+Use **Memories and sharing** to save selected facts, optionally sourced to an exchange. Facts are not inferred automatically from model text. Share only the selected fact with another named conversation. Correct/delete applies everywhere that canonical fact is shared; deleting it excludes future fact retrieval but does not erase old transcript text or older backups.
 
-## Runtime boundaries
+## Optional legacy import
 
-One local process and one active conversation are supported. Do not launch multiple workers or use this as a hosted service. Overlapping requests return busy; the UI also disables submission while awaiting a response. There is no automatic retry. A successful turn stores exactly one event, then publishes its in-memory state; failed generation/storage does not advance committed state. Atomic replacement protects the prior file from incomplete writes, but is not a full backup or multi-process transaction system.
+Set `INCANTA_IMPORT_PATH` to the exact local history file and restart. No folder is scanned. Complete the short setup form (or open **Edit setup**), expand **Import a selected legacy history**, preview counts/setup, then explicitly confirm. Preview expires after ten minutes; files are limited to 16 MiB for this bounded importer. A changed/malformed source requires a new preview.
 
-Existing unknown memory fields and historical duplicates are retained. Malformed histories are preserved and produce an error instead of being silently reset. Recent in-memory dialogue/gauges reset on restart; durable timeline history reloads. Factual-memory heuristics and personality prompt integration remain known limitations for M2/M3. Native-library crashes can still terminate the process; use a verified compatible native runtime.
+Confirmation preserves original bytes, unknown fields and duplicate entries in a private copy under the database directory's `imports/` folder before a transactional import. Duplicate exchanges are imported; unknown fields remain in the exact preserved copy. Repeating import confirmation does not duplicate an already imported checksum. No source is moved, changed or deleted; old inferred milestones do not become verified facts. The preserved copy is not a complete application backup.
 
-## Verification and privacy
+## Runtime and API boundaries
 
-See [the feature verification record](specs/001-reliable-local-chat/verification.md), [testing guide](docs/TESTING.md) and [asset guide](docs/ASSETS.md). Stage explicit reviewed paths, run `python scripts/check_repository.py`, then inspect `git diff --cached`. Use `--tracked` after committing to inspect HEAD. No private history, personality, model, environment, generated media or archive belongs in Git.
+One owner and one server process are supported. One generation runs at a time across conversations; overlapping requests return busy. Per-conversation UUID request identifiers make explicit retries idempotent. Settings or facts changed during generation invalidate the pending result before commit. Inference/storage failures do not advance committed state. Conservative UTF-8 prompt budgeting trims oldest dialogue and bounds selected facts; an oversized message/setup can require shortening even below the 8,000-character transport limit.
+
+The active API uses `/api/conversations/{id}/turns`; `/api/chat` returns `conversation_required`. Obtain a CSRF token from `/api/bootstrap` and send it with the local session cookie, exact local `Origin`, JSON content type and `X-CSRF-Token` on mutations. There is no CORS expansion or multi-user authentication. Restarting clears browser session tokens; reload the page to bootstrap again. No private content is stored in session cookies.
+
+Preserve corrupt/read-only/disconnected storage for repair. A database observed by the process and then disconnected is not silently recreated. No ComfyUI, proactive scheduler or notification helper is installed by this feature.
+
+## Verification
+
+Run model-free Python/Node suites, then review [verification 002](specs/002-companion-conversations/verification.md). To explicitly check an already configured model with synthetic temporary SQLite state:
+
+```sh
+python scripts/verify_companion_model.py
+```
+
+This short native check does not replace the owner-reviewed 30-minute English conversation/restart acceptance. The historical [M1 runner](scripts/verify_local_model.py) explicitly selects its legacy app factory for baseline verification. Do not run either native check as part of ordinary test discovery or CI.

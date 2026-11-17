@@ -1,6 +1,6 @@
 # M1 verification record
 
-**Date:** 2026-11-17. **Overall:** automated, synthetic-browser and explicit native-model/separate-process checks passed. Reviewed delivery remains pending; M1 is not yet merged/complete.
+**Date:** 2026-11-17. **Overall:** automated, synthetic-browser and explicit native-model/separate-process checks passed. Hosted CI/review passed and PR #7 merged as a52cf54a50837898b3606c8e059732163b10d9db; M1 is complete.
 
 ## Environment and automated results
 
@@ -44,8 +44,14 @@ This gate proves the tested model/runtime exchange and durable history reload, n
 
 ## Delivery gate (T021)
 
-**PENDING:** existing implementation changes predate this verification pass and remain uncommitted. A temporary staging snapshot passed repository safeguards and staged whitespace checks, including M1 and new MVP planning files; the original user staging area was preserved. Reviewed PR/merge is still required. Do not mark M1 delivered/merged, infer remote CI success, or conflate planning artifacts for later MVP features with implementation.
+**PENDING REVIEW:** the verified implementation and MVP plans are now committed as `d895585` in [PR #7](https://github.com/LYF-FC/incanta/pull/7), following the owner's request. A temporary staging snapshot passed repository safeguards and staged whitespace checks, including M1 and new MVP planning files; the original user staging area was preserved. PR #7 is open; reviewer decision/merge is still required. Do not mark M1 delivered/merged, infer remote CI success, or conflate planning artifacts for later MVP features with implementation.
 
 ## Scope limits
 
 M1 preserves a readable durable timeline; it does not restore recent in-memory dialogue, gauges or relationship state after process restart. Full per-conversation continuity belongs to the next MVP feature. Factual-memory quality, personality prompt integration, session isolation, live rendering and notifications remain unimplemented.
+
+**Hosted check follow-up:** PR #7 jobs were rejected before any runner/test steps because GitHub reported an account billing/spending-limit issue. Local pass results above remain distinct; no hosted CI success is claimed and no billing setting was changed.
+
+**CI resolution — 2026-11-17:** after the owner changed the repository to public, rerun attempt 2 of [the PR #7 workflow](https://github.com/LYF-FC/incanta/actions/runs/44167022471) completed successfully. The earlier billing failure is historical, not the current CI result. M1 now has hosted model-free CI evidence as well as the recorded native smoke; reviewer decision/merge remains open.
+
+**Reviewed delivery — 2026-11-17:** after explicit owner authorization and review, PR #7 merged as `a52cf54a50837898b3606c8e059732163b10d9db` with attempt-2 CI green on its exact head. Issue #1 is closed as completed and T021 is now checked. Earlier pending-delivery paragraphs record the pre-merge state. No native run was repeated as a side effect of this CI review.

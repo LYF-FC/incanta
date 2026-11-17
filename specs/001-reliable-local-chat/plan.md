@@ -2,7 +2,7 @@
 
 **Branch**: `001-reliable-local-chat` (existing implementation branch) | **Date**: 2026-11-04 | **Spec**: [spec.md](spec.md)
 
-**Status:** design implemented in the working tree. Automated and synthetic browser checks passed on 2026-11-17; explicit native-model/process-restart check also passed; reviewed-delivery gate remains pending. See [verification.md](verification.md).
+**Status:** design implemented in the working tree. Automated and synthetic browser checks passed on 2026-11-17; explicit native-model/process-restart check also passed; hosted CI/review passed and PR #7 merged on 2026-11-17. See [verification.md](verification.md).
 
 ## Summary
 
@@ -38,7 +38,7 @@ Retain Flask/plain JavaScript. Introduce settings, a web-app factory, lazy injec
 | Reproducible checks | Fake inference and temporary storage, scoped lightweight test dependencies |
 | Recoverable simplicity | Existing stack/schema retained; atomic writes and no destructive migration |
 
-No exceptions requested. Recheck these gates after implementation and before merge. The design review passes; runtime compliance is supported by the recorded synthetic checks; explicit native-model smoke also passes; reviewed delivery remains pending.
+No exceptions requested. Recheck these gates after implementation and before merge. The design review passes; runtime compliance is supported by the recorded synthetic checks; explicit native-model smoke also passes; reviewed delivery completed through PR #7.
 
 ## Project Structure
 

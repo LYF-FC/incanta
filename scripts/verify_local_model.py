@@ -51,7 +51,7 @@ def main():
                 os.dup2(diagnostics.fileno(), 2)
                 with contextlib.redirect_stdout(diagnostics), contextlib.redirect_stderr(diagnostics):
                     phase = 'startup'
-                    app = create_app(settings)
+                    app = create_app(settings, legacy=True)
                     client = app.test_client()
                     status = client.get('/api/status').get_json()
                     assert status['ready'] and status['model_state'] == 'unloaded'
@@ -67,7 +67,7 @@ def main():
                     assert len(document['timeline']) == 1
                     # New app state and memory reader, same durable storage.
                     phase = 'reload'
-                    restarted = create_app(settings)
+                    restarted = create_app(settings, legacy=True)
                     reloaded = restarted.extensions['incanta'].memory.load_memory()
                     assert len(reloaded['timeline']) == 1 and reloaded == document
                     assert not restarted.extensions['incanta'].history
@@ -77,7 +77,7 @@ def main():
                     check = subprocess.run(
                         [sys.executable, '-c',
                          "from frontend_app import create_app; "
-                         "a=create_app(); e=a.extensions['incanta']; "
+                         "a=create_app(legacy=True); e=a.extensions['incanta']; "
                          "assert len(e.memory.load_memory()['timeline']) == 1; "
                          "assert e.inference._model is None; "
                          "assert a.test_client().get('/api/status').get_json()['model_state'] == 'unloaded'"],
