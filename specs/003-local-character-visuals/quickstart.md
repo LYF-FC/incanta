@@ -1,6 +1,6 @@
 # Visual validation quickstart
 
-Planned tests become runnable during implementation. Requires 002 store/contracts and M1 runtime acceptance. Automated tests install no ComfyUI/model packages.
+Automated tests install no ComfyUI or model packages. For native configuration, use the pinned [setup guide](../../SETUP.md#optional-local-visuals) and record results in [verification.md](verification.md).
 
 1. Run `python3 -m unittest discover -s tests -v` and `node --test tests/visuals.test.js` with fake renderer/clock/resource manager.
 2. Queue portrait/manual/automatic jobs in temporary storage; verify scoped image display, explicit approval, cooldown, bounded queue, manual priority and next-idle chat priority.

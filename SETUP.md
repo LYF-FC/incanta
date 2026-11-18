@@ -58,7 +58,30 @@ One owner and one server process are supported. One generation runs at a time ac
 
 The active API uses `/api/conversations/{id}/turns`; `/api/chat` returns `conversation_required`. Obtain a CSRF token from `/api/bootstrap` and send it with the local session cookie, exact local `Origin`, JSON content type and `X-CSRF-Token` on mutations. There is no CORS expansion or multi-user authentication. Restarting clears browser session tokens; reload the page to bootstrap again. No private content is stored in session cookies.
 
-Preserve corrupt/read-only/disconnected storage for repair. A database observed by the process and then disconnected is not silently recreated. No ComfyUI, proactive scheduler or notification helper is installed by this feature.
+Preserve corrupt/read-only/disconnected storage for repair. A database observed by the process and then disconnected is not silently recreated. Incanta installs no renderer, proactive scheduler or notification helper.
+
+## Optional local visuals
+
+Use an **Incanta-only ComfyUI instance** on a loopback port. Start ComfyUI yourself with local nodes and weights and set `--disable-api-nodes --disable-metadata`. Restrict custom nodes to reviewed local nodes and Photoshoot. Incanta does not install, launch or download dependencies. Keep this instance separate from other UI or API workloads because ComfyUI releases model resources across the entire instance. A separate port on a shared process is insufficient.
+
+The isolated API checks exercised ComfyUI **0.3.59**, checkout `707b2638ecd82360c0a67e1d86cc4fdeae218d03`, and Photoshoot `84f168d65a432c96b491858af0bf7d90dde807d7`. Pin the source checkouts independently. The renderer reports its released version and node schemas through HTTP. The full revisions in the local profile record the operator's source pins. [ComfyUI server](https://github.com/Comfy-Org/ComfyUI/blob/707b2638ecd82360c0a67e1d86cc4fdeae218d03/server.py) · [Photoshoot export hook](https://github.com/ralksta/ComfyUI-Photoshoot/blob/84f168d65a432c96b491858af0bf7d90dde807d7/js/shared.mjs)
+
+| Setting | Meaning |
+| --- | --- |
+| `INCANTA_RENDERER_URL` | Local HTTP origin with port, for example `http://127.0.0.1:8189` |
+| `INCANTA_RENDERER_DEDICATED=1` | Confirm this is an Incanta-only renderer |
+| `INCANTA_WORKFLOW_ROOT` | Private directory holding named `<profile>.json` bundles |
+| `INCANTA_REFERENCE_ROOT` | Private ComfyUI input directory when using `LoadImage` or `LoadImageMask` in the bundle |
+| `INCANTA_RENDER_OUTPUT_ROOT` | Existing private directory with mode `0700` for Incanta's validated image copies |
+
+Create the configured private directories before running. Use real directory paths without symbolic links for these roots. ComfyUI keeps its own source outputs, separate from Incanta's asset store. If an existing v1 SQLite database will be used, close Incanta and take a private SQLite backup before upgrading. The app adds visual tables with a transactional v2 migration when it next opens the database.
+
+1. In the Photoshoot-enabled ComfyUI editor, set the person, wardrobe, expression and local identity conditioning. Export the resolved API prompt with Photoshoot enabled. The export must contain the node-level hidden builder inputs, including the saved JSON strings. Inspect the export against `/object_info/<node-class>`. Use the browser's resolved `graphToPrompt().output` if the installed export menu omits that state. A canvas export or Photoshoot series controls do not describe a single headless submission.
+2. Wrap the API prompt using the shape in [the synthetic bundle](examples/render-workflow.example.json). Record the two source revisions and the renderer version. List each Photoshoot hidden state binding by its node ID and input name. Put `{incanta_scene}` exactly once in the chosen scene string, preserving the profile's other prompt text and Photoshoot placeholders. Select a single `SaveImage` output with a batch size of one. Reference files used by ComfyUI must be present in its input folder at the same relative names.
+3. Save the private bundle as `<profile>.json` and enter the profile ID in **Portraits and scenes**. Request a portrait and approve or reject that candidate. An approved portrait remains available if the renderer disconnects after releasing resources. Changing a profile invalidates pending images. Automatic scenes start off and can be enabled separately for each conversation with a cooldown of 60–3600 seconds.
+4. When a render is active, a new reply waits for the renderer to finish and takes the next idle slot ahead of queued images. A pending ComfyUI item can be deleted by its owned ID. Running cancellation suppresses display after it finishes. If ownership cannot be reconciled, check the dedicated queue explicitly before resolving the request. If the renderer could still own model resources, chat generation waits for release confirmation or returns a recoverable handoff error. Reconnect the same dedicated endpoint and use **Check renderer resource release** once its queue is idle. Saved chat and images remain available during recovery.
+
+Read [feature 003 verification](specs/003-local-character-visuals/verification.md) for the tested hardware scope and owner acceptance. The model-free checks never load diffusion or GGUF weights.
 
 ## Verification
 

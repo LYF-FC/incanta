@@ -2,7 +2,7 @@
 
 Updated 2026-11-17. Priorities are ordered by dependency, not calendar promises. This roadmap covers Incanta as a local character/conversation project, with Butler remaining a separate production platform.
 
-**Current focus:** complete owner dialogue acceptance (#9) after merged M1/002 PRs #7/#8; proceed through planned local visuals/proactive/release work. M0/CI do not make the app production-ready.
+**Current focus:** finish the [local visuals acceptance](specs/003-local-character-visuals/verification.md) and the separate owner dialogue acceptance (#9). Proactive follow-ups and release work follow those increments.
 
 | Milestone | Status | Outcome | Exit gate |
 | --- | --- | --- | --- |
@@ -53,7 +53,7 @@ Product scope is sufficiently defined to author the subsequent feature specifica
 
 ### Spec Kit MVP implementation backlog
 
-Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 has 25 completed implementation/review/delivery tasks and one open owner-acceptance task; the 60 tasks in 003–005 remain unchecked. Planning is complete. Feature 002 is delivered with owner acceptance pending; 003–005 remain planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
+Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 is delivered with owner acceptance pending. Feature 003 has implemented local visuals on its feature branch and recorded a native render run. Owner visual acceptance and combined native handoff remain open. Features 004 and 005 are planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
 
 | Order | Feature | Deliverable | Tasks | Dependency |
 | --- | --- | --- | --- | --- |

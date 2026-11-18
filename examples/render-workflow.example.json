@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "comfyui_version": "synthetic",
+  "comfyui_revision": "0000000000000000000000000000000000000000",
+  "photoshoot_revision": "0000000000000000000000000000000000000000",
+  "photoshoot_state": [["1", "builder_state"]],
+  "scene_input": ["2", "scene"],
+  "output_node": "3",
+  "prompt": {
+    "1": {"class_type": "SyntheticPhotoshootBuilder", "inputs": {"builder_state": "{\"expression\":\"neutral\"}"}},
+    "2": {"class_type": "SyntheticRenderer", "inputs": {"identity": ["1", 0], "scene": "Neutral setting, {incanta_scene}"}},
+    "3": {"class_type": "SaveImage", "inputs": {"images": ["2", 0], "filename_prefix": "replaced_at_submission"}}
+  }
+}

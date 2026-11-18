@@ -2,7 +2,7 @@
 
 **Branch**: `codex/003-local-character-visuals` | **Date**: 2026-11-17 | **Spec**: [spec.md](spec.md)
 
-**Status:** planned only. Depends on 002; no live ComfyUI integration exists yet.
+**Status:** Implemented on the feature branch. See [verification.md](verification.md) for evidence and outstanding gates.
 
 ## Summary
 
@@ -12,7 +12,7 @@ Keep Flask/plain JavaScript. Add a local rendering adapter, durable SQLite job r
 
 **Language/Version:** Python 3.11/3.13; plain JS.
 
-**Primary Dependencies:** existing Flask/SQLite; stdlib HTTP client adapter; separately installed/pinned ComfyUI and Photoshoot (not dependencies of web/test requirements).
+**Primary Dependencies:** existing Flask/SQLite; Pillow for image decoding; stdlib HTTP client adapter; separately installed/pinned ComfyUI and Photoshoot (not dependencies of web/test requirements).
 
 **Storage:** 002 DB plus configured ignored output/reference/workflow directories; metadata stores opaque asset IDs and checksums, never public paths.
 
@@ -30,7 +30,7 @@ Keep Flask/plain JavaScript. Add a local rendering adapter, durable SQLite job r
 
 ## Constitution Check
 
-Local execution and private assets preserved; all external dependency setup is explicit; synthetic reproducible tests required; state/schema changes use migration/backup; claims remain planned. No exception. Recheck measured M2 fit/face match and dependency licenses before release.
+Local execution and private assets preserved; all external dependency setup is explicit; synthetic reproducible tests required; state/schema changes use migration/backup; claims follow recorded verification. No exception. Recheck measured M2 fit/face match and dependency licenses before release.
 
 ## Project Structure
 

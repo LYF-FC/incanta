@@ -1,12 +1,14 @@
 """Loopback-only Flask entry point; asset and model access happens on requests."""
 from flask import Flask, jsonify, render_template, request
+from time import time
 from werkzeug.exceptions import HTTPException
 from backend.config import ROOT, Settings
 from backend.chat_engine import ChatEngine
 from backend.errors import AppError
 
 
-def create_app(settings=None, inference=None, memory=None, rng=None, legacy=False):
+def create_app(settings=None, inference=None, memory=None, rng=None, legacy=False, *,
+               renderer=None, visual_autostart=True, visual_clock=time):
     settings = settings if settings is not None else Settings.from_env()
     app = Flask(__name__, static_url_path='', static_folder=str(ROOT/'frontend'),
                 template_folder=str(ROOT/'frontend'))
@@ -57,6 +59,18 @@ def create_app(settings=None, inference=None, memory=None, rng=None, legacy=Fals
     if not legacy:
         from backend.conversation_routes import register_routes
         register_routes(app, engine)
+
+        from backend.rendering.jobs import RenderJobs
+        from backend.rendering.routes import register_visual_routes
+        from backend.resource_manager import ResourceManager
+        engine.visuals = RenderJobs(engine.store, settings, ResourceManager(), engine.inference,
+                                    renderer=renderer, clock=visual_clock)
+        app.extensions['incanta_visuals'] = engine.visuals
+        register_visual_routes(app, engine.visuals)
+        if visual_autostart:
+            @app.before_request
+            def start_visual_worker():
+                engine.visuals.start()
     return app
 
 
@@ -66,4 +80,5 @@ if __name__ == '__main__':
     settings = app.extensions['incanta'].settings
     if not settings.valid:
         raise SystemExit('Invalid local settings. Check the documented configuration.')
+    app.extensions['incanta_visuals'].start()
     app.run(host=settings.host, port=settings.port, debug=False, use_reloader=False)

@@ -1,6 +1,7 @@
 'use strict';
 const byId = id => document.getElementById(id);
 const client = IncantaConversations.createClient((...args)=>fetch(...args));
+const visuals = IncantaVisuals.mount(document, client);
 let conversations = [], current = null, editing = false, previewToken = null, memoryRevision = 0;
 const error = message => {byId('chat-error').textContent = message;};
 const textNode = (tag,text)=>IncantaMemory.textElement(document,tag,text);
@@ -65,7 +66,7 @@ async function selectConversation(cid) {
   byId('conversation-panel').hidden = false;byId('setup-panel').hidden = true;byId('edit-settings').disabled = false;
   byId('conversation-heading').textContent = result.title;
   byId('effective-settings').textContent = `Personality: ${result.personality}\nRelationship: ${result.relationship || 'Not specified'}\nBoundaries: ${result.boundaries}`;
-  renderState(result.state);renderTranscript();await refreshMemories();
+  renderState(result.state);renderTranscript();visuals.select(cid);await refreshMemories();
 }
 async function refreshStatus() {
   const state = await client.request('/api/status');
@@ -80,8 +81,8 @@ async function initialize() {
   if(target)await selectConversation(target.id);else showSetup(null);
 }
 function action(handler) {return async event=>{event.preventDefault();try {await handler(event);error('');} catch(caught) {error(caught.message);}};}
-byId('refresh-status').addEventListener('click',action(async()=>{await client.initialize();await refreshStatus();await listConversations();}));
-byId('new-conversation').addEventListener('click',()=>{client.clear();syncChatControls();current = null;selectedStorage(null);byId('conversation-panel').hidden = true;byId('edit-settings').disabled = true;byId('conversation-select').value = '';showSetup(null);});
+byId('refresh-status').addEventListener('click',action(async()=>{await client.initialize();await refreshStatus();await listConversations();await visuals.refresh();}));
+byId('new-conversation').addEventListener('click',()=>{client.clear();visuals.select(null);syncChatControls();current = null;selectedStorage(null);byId('conversation-panel').hidden = true;byId('edit-settings').disabled = true;byId('conversation-select').value = '';showSetup(null);});
 byId('edit-settings').addEventListener('click',()=>{if(current)showSetup(current);});
 byId('cancel-setup').addEventListener('click',()=>{byId('setup-panel').hidden = true;});
 byId('conversation-select').addEventListener('change',action(async event=>{if(event.target.value)await selectConversation(event.target.value);}));

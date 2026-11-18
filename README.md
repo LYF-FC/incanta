@@ -20,7 +20,7 @@ A private, local AI character and conversation project. Incanta combines a local
 
 Flask serves HTML/CSS/plain JavaScript at `http://127.0.0.1:5001`. Each Celeste conversation has its own short setup form, transcript, emotional state and explicitly saved facts. SQLite persists this state across restarts. Selected canonical facts can be shared between conversations; corrections/deletions propagate to every recipient's future fact retrieval. The interface includes inspect/correct/delete and sharing controls.
 
-Local GGUF inference remains lazy. A configured private personality file is no longer required by the active conversation path. Legacy JSON history is imported only through an explicitly configured source, preview and confirmation, preserving exact original bytes. The old M1 engine remains available only to its explicit compatibility tests/smoke runner. Image generation is still metadata-only; live ComfyUI, notifications, React and FastAPI are not implemented.
+Local GGUF inference remains lazy. A configured private personality file is no longer required by the active conversation path. Legacy JSON history is imported only through an explicitly configured source, preview and confirmation, preserving exact original bytes. The old M1 engine remains available only to its explicit compatibility tests/smoke runner. Optional ComfyUI/Photoshoot visuals add approved portraits, manual scenes and opt-in automatic scenes. See the [local visuals setup](SETUP.md#optional-local-visuals) and [verification 003](specs/003-local-character-visuals/verification.md) for evidence and acceptance. Proactive follow-ups and notifications remain planned.
 
 ## Work without a model
 
