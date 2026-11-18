@@ -46,6 +46,14 @@ class LocalInference:
             return 'unavailable'
         return 'loaded' if self._model is not None else 'unloaded'
 
+    def unload(self):
+        if self._model is not None:
+            try:
+                self._model.close()
+            except Exception:
+                raise AppError('render_handoff') from None
+            self._model = None
+
     def generate(self, prompt):
         if not self._assets_available():
             raise AppError('model_unavailable')

@@ -178,3 +178,17 @@ button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-
 summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
 #chat-input { min-width: 0; }
 @media (max-width: 500px) { .container { padding: 16px; } body { padding: 12px 6px; } }
+
+.approved-portrait,
+.visual-jobs img {
+  width: min(100%, 20rem);
+  max-height: 28rem;
+  object-fit: contain;
+  object-position: left;
+  border-radius: 0.5rem;
+}
+#visual-panel form { margin-block: 0.9rem; }
+.visual-jobs { list-style: none; padding: 0; }
+.visual-jobs li { margin-block: 1rem; }
+.visual-jobs img { display: block; margin-block: 0.5rem; }
+.visual-jobs button { margin: 0.25rem 0.4rem 0.25rem 0; }

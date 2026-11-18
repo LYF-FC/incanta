@@ -35,9 +35,11 @@
     <section id="conversation-panel" hidden>
       <h3 id="conversation-heading"></h3>
       <p id="effective-settings"></p>
+      <img id="approved-portrait" class="approved-portrait" alt="Approved portrait of Celeste" hidden />
       <div id="emotion-label">Current emotion: Neutral</div>
       <button id="load-earlier" type="button" hidden>Load earlier exchanges</button>
       <section id="chat-messages" class="chat-box" aria-label="Conversation transcript" aria-live="polite"></section>
+      <p id="visual-wait" role="status"></p>
       <form id="chat-form">
         <input type="text" id="chat-input" aria-label="Message" placeholder="Say something to Celeste…" autocomplete="off" maxlength="8000" required />
         <button id="send-button" type="submit">Send</button>
@@ -45,6 +47,28 @@
       <p>Replies are saved before they appear. If a request fails, an explicit retry retrieves the same saved turn when possible.</p>
       <button id="toggle-gauges" type="button" aria-expanded="false" aria-controls="gauge-container">Show gauges</button>
       <div id="gauge-container" hidden></div>
+      <details id="visual-panel">
+        <summary>Portraits and scenes</summary>
+        <p id="visual-readiness" role="status"></p>
+        <p id="visual-error" role="alert"></p>
+        <form id="visual-identity">
+          <label>Local visual profile <input id="visual-configuration" maxlength="64" autocomplete="off" /></label>
+          <button id="visual-save-identity" type="submit">Save profile</button>
+        </form>
+        <form id="visual-request">
+          <label>Image type <select id="visual-kind"><option value="portrait">Portrait</option><option value="manual">Scene</option></select></label>
+          <label>Visual description <textarea id="visual-description" maxlength="2000" required></textarea></label>
+          <button id="visual-submit" type="submit" disabled>Request image</button>
+        </form>
+        <form id="visual-policy" hidden>
+          <label><input id="visual-automatic" type="checkbox" /> Generate automatic scenes</label>
+          <label>Cooldown in seconds <input id="visual-cooldown" type="number" min="60" max="3600" value="300" required /></label>
+          <button id="visual-save-policy" type="submit">Save scene settings</button>
+        </form>
+        <button id="visual-recover" type="button" hidden>Check renderer resource release</button>
+        <ul id="visual-jobs" class="visual-jobs" aria-label="Image history"></ul>
+        <button id="visual-load-earlier" type="button" hidden>Load earlier images</button>
+      </details>
       <details id="memory-panel">
         <summary>Memories and sharing</summary>
         <p>Save selected facts explicitly. Corrections and deletions apply everywhere a fact is shared. Deleting a memory removes it from future fact retrieval; its original transcript and older backups remain.</p>
@@ -67,6 +91,7 @@
     <script src="chat_helpers.js"></script>
     <script src="conversation_helpers.js"></script>
     <script src="memory_controls.js"></script>
+    <script src="visuals.js"></script>
     <script src="app.js"></script>
   </main>
 </body>

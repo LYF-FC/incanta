@@ -63,4 +63,5 @@ jobs:
           node --check frontend/chat_helpers.js
           node --check frontend/conversation_helpers.js
           node --check frontend/memory_controls.js
+          node --check frontend/visuals.js
           node --test tests/*.test.js

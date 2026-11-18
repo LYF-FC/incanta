@@ -14,6 +14,12 @@ class Settings:
     data_dir: Path = ROOT / "chat_histories"
     database_path: Path | None = None
     import_path: Path | None = None
+    renderer_url: str | None = None
+    renderer_dedicated: bool = False
+    workflow_root: Path | None = None
+    reference_root: Path | None = None
+    render_output_root: Path | None = None
+    visuals_parse_failed: bool = False
     host: str = "127.0.0.1"
     port: int = 5001
     context_length: int = 4096
@@ -44,6 +50,22 @@ class Settings:
                     values[name] = (ROOT / path).resolve() if not path.is_absolute() else path.resolve()
                 except (OSError, ValueError, RuntimeError):
                     failed = True
+        for name in ("workflow_root", "reference_root", "render_output_root"):
+            raw = env.get(f"INCANTA_{name.upper()}")
+            if raw is not None:
+                try:
+                    if not raw or "\0" in raw:
+                        raise ValueError
+                    # Keep the path spelling so visual file access can reject symlinks.
+                    path = Path(raw).expanduser()
+                    values[name] = path if path.is_absolute() else ROOT / path
+                except (ValueError, RuntimeError):
+                    values["visuals_parse_failed"] = True
+        values["renderer_url"] = env.get("INCANTA_RENDERER_URL")
+        dedicated = env.get("INCANTA_RENDERER_DEDICATED", "0")
+        values["renderer_dedicated"] = dedicated == "1"
+        if dedicated not in {"0", "1"}:
+            values["visuals_parse_failed"] = True
         if "INCANTA_HOST" in env:
             values["host"] = env["INCANTA_HOST"]
         for name in ["port", "context_length", "gpu_layers", "threads"]:

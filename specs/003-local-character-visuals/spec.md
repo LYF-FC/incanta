@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-17
 
-**Status**: Planned; not implemented. Depends on 002 conversation/settings/context contracts and M1 native acceptance.
+**Status**: Implementation and verification in progress. Owner face-match acceptance is tracked in [verification.md](verification.md).
 
 ## User Scenarios & Testing *(mandatory)*
 

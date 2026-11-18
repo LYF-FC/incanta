@@ -1,6 +1,17 @@
 """Public error categories; never include raw exceptions, paths or dialogue."""
 ERRORS = {
-    'not_found': (404, 'This conversation or memory is unavailable.'),
+    'not_found': (404, 'This item is unavailable.'),
+    'renderer_unconfigured': (503, 'Configure local visuals to request images.'),
+    'renderer_unavailable': (503, 'The local renderer is unavailable. Check it and try again.'),
+    'renderer_incompatible': (503, 'Check the dedicated renderer and configured API workflow.'),
+    'render_rejected': (422, 'The renderer rejected the workflow. Check the local configuration.'),
+    'render_failed': (500, 'The local render failed.'),
+    'render_uncertain': (409, 'The renderer outcome is uncertain. Check the renderer before resolving this request.'),
+    'render_queue_full': (409, 'The image queue is full. Wait or cancel a queued request.'),
+    'render_stale': (409, 'The conversation context or visual identity changed. Request a new image.'),
+    'render_handoff': (503, 'The renderer has not released its resources. Check the dedicated renderer before retrying chat.'),
+    'asset_invalid': (422, 'The renderer returned an invalid or unsupported image.'),
+    'asset_unavailable': (503, 'The local image could not be read or saved.'),
     'forbidden': (403, 'Refresh Incanta and submit from its local page.'),
     'revision_conflict': (409, 'This item changed. Refresh it before editing again.'),
     'request_conflict': (409, 'This request identifier was already used for different text.'),

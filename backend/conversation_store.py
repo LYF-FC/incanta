@@ -112,8 +112,7 @@ class ConversationStore:
                 db.row_factory=sqlite3.Row
                 db.execute('PRAGMA foreign_keys=ON')
                 db.execute('PRAGMA synchronous=FULL')
-                if db.execute('PRAGMA user_version').fetchone()[0]!=1:
-                    raise AppError('history_unreadable')
+                self._migrate(db)
             if write:db.execute('BEGIN IMMEDIATE')
             else:db.execute('BEGIN')
             yield db
@@ -128,6 +127,26 @@ class ConversationStore:
             if db is not None:
                 db.rollback()
                 db.close()
+
+    @staticmethod
+    def _migrate(db):
+        version = db.execute('PRAGMA user_version').fetchone()[0]
+        if version == 2:
+            return
+        db.execute('BEGIN IMMEDIATE')
+        try:
+            version = db.execute('PRAGMA user_version').fetchone()[0]
+            if version == 1:
+                sql = (Path(__file__).parent/'migrations/002_visuals.sql').read_text()
+                for statement in sql.split(';'):
+                    if statement.strip():
+                        db.execute(statement)
+            elif version != 2:
+                raise AppError('history_unreadable')
+            db.commit()
+        except BaseException:
+            db.rollback()
+            raise
 
     @staticmethod
     def commit(db):
