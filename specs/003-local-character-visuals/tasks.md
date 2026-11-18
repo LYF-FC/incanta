@@ -30,7 +30,7 @@ Independent test: fake approved portrait stays scoped/displayable when renderer 
 - [X] T008 [US1] Test visual identity ownership, explicit approval and safe asset serving in tests/test_render_jobs.py; media types "image/png|image/jpeg|image/webp", byte count "1–20971520", dimensions "1–8192 pixels per axis". (FR-001, FR-003, FR-010)
 - [X] T009 [US1] Implement identity revisions, validated atomic artifact storage and approved portrait selection in backend/rendering/jobs.py; reject path traversal/symlink/type mismatches. (FR-001, FR-003, FR-007)
 - [X] T010 [US1] Add identity/status/portrait/asset routes in frontend_app.py and portrait/approval UI in frontend/visuals.js and frontend/index.html; retain last approved image during failures. (FR-001, FR-003, FR-008)
-- [ ] T011 [US1] Export resolved Photoshoot API workflow locally and headlessly verify identity/wardrobe/expression inputs; record owner portrait verdict and hashes in specs/003-local-character-visuals/verification.md. (FR-001, FR-002, FR-009, SC-001)
+- [X] T011 [US1] Export resolved Photoshoot API workflow locally and headlessly verify identity/wardrobe/expression inputs; record owner portrait verdict and hashes in specs/003-local-character-visuals/verification.md. (FR-001, FR-002, FR-009, SC-001)
 
 ## Phase 4 — US2: manual jobs and recovery
 

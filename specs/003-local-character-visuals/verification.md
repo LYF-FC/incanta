@@ -41,9 +41,24 @@ After the owner rejected the first portrait for face match, a second isolated pr
 
 Lifetime ComfyUI peak was 6,678 MiB. Incanta physical footprint was 173–184 MiB after closing the verified GGUF and 4,533–4,583 MiB after reloading it and generating a successful synthetic reply. The real GGUF → MPS render → GGUF order was checked on each request. Both processes completed all four transitions without a crash. The reply timing includes renderer release and CPU-backed chat generation.
 
+## Scene variety follow-up · 2026-11-18
+
+The owner approved the revised portrait and found the first scene set too similar. The next three candidates used the same reference and identity adapter with independently framed portraits, different subject placements, lighting, settings and sampler seeds. A feathered mask retained the facial region while the renderer regenerated the surrounding image. Incanta retained the approved portrait during all three workflow changes.
+
+| Candidate | Render seconds | Sampled peak ComfyUI footprint (MiB) | Incanta peak during rendering (MiB) | ComfyUI footprint after release (MiB) |
+| --- | ---: | ---: | ---: | ---: |
+| Greenhouse draft | 61.4 | 6,675 | 159 | 1,244 |
+| Bookstore | 59.5 | 6,759 | 172 | 1,251 |
+| Coast | 68.5 | 6,986 | 175 | 1,482 |
+| Corrected greenhouse | 52.5 | 6,980 | 156 | 1,508 |
+
+The renderer and app completed the revised requests without a crash. After the coast render, the verified GGUF reloaded and replied in 23.7 seconds. A secondary face in the greenhouse draft was removed in a targeted pass. The final greenhouse, bookstore and coast had single detected face positions at about 29%, 50% and 69% across the frame, respectively. Those positions verify framing only. Owner review determines likeness and scene variety. The three final candidates are available in the isolated local review conversation. Exact private profiles and image files remain outside the repository.
+
 ## Owner gates
 
-The owner authorized an existing local checkpoint and character LoRA and 11 local reference photos. The owner reviewed the first portrait and said the face needs work. The revised portrait and three reference-assisted scenes are ready for the owner's verdict. Feature 003 requires explicit approval of a matching portrait and three consistent, distinct scenes. The existing dialogue acceptance [issue #9](https://github.com/LYF-FC/incanta/issues/9) remains separate. Keep [issue #4](https://github.com/LYF-FC/incanta/issues/4) open while native or owner gates remain.
+The owner authorized an existing local checkpoint and character LoRA and 11 local reference photos. The first portrait needed a closer face match. On 2026-11-18, the owner approved the revised reference-assisted portrait. Incanta recorded and verified that approval in the isolated review conversation. The first reference-assisted scene set used the same reference framing and sampling seed throughout. The owner found the scenes too similar. The three recomposed scenes are ready for owner review. [Owner acceptance record](https://github.com/LYF-FC/incanta/issues/4#issuecomment-6971542755)
+
+Keep [issue #4](https://github.com/LYF-FC/incanta/issues/4) open for approval of three distinct, reference-matching scenes. The separate dialogue acceptance remains in [issue #9](https://github.com/LYF-FC/incanta/issues/9).
 
 ## Delivery
 
