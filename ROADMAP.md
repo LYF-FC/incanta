@@ -53,7 +53,7 @@ Product scope is sufficiently defined to author the subsequent feature specifica
 
 ### Spec Kit MVP implementation backlog
 
-Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 is delivered with owner acceptance pending. Feature 003 has implemented local visuals on its feature branch and recorded a native render run. Owner visual acceptance and combined native handoff remain open. Features 004 and 005 are planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
+Created on 2026-11-17 through the installed individual specification/planning/task workflows, using resolved upstream templates and explicit feature directories. Feature 002 is delivered with owner acceptance pending. Feature 003 has implemented local visuals on its feature branch and recorded a native render run. An actual chat/render handoff was measured. Owner visual acceptance remains open. Features 004 and 005 are planned. Native M1 verification was explicitly requested separately and used the owner-supplied existing model with synthetic temporary data.
 
 | Order | Feature | Deliverable | Tasks | Dependency |
 | --- | --- | --- | --- | --- |

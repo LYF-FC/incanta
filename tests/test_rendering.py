@@ -107,8 +107,11 @@ class RenderingTests(unittest.TestCase):
         Image.new('RGB', (2, 2)).save(picture, format='PNG')
         data = picture.getvalue()
         self.assertEqual(decode(data, 'image/png'), (2, 2))
+        oversized_dimensions = BytesIO()
+        Image.new('RGB', (8193, 1)).save(oversized_dimensions, format='PNG')
         for malformed, claimed in ((data, 'image/jpeg'), (data[:42], 'image/png'),
-                                   (b'0' * (MAX_IMAGE + 1), 'image/png')):
+                                   (b'0' * (MAX_IMAGE + 1), 'image/png'),
+                                   (oversized_dimensions.getvalue(), 'image/png')):
             with self.assertRaises(AppError) as caught:
                 decode(malformed, claimed)
             self.assertEqual(caught.exception.code, 'asset_invalid')

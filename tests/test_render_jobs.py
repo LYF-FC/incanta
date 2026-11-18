@@ -345,3 +345,24 @@ class RenderJobsTests(CompanionCase):
         result = self.turn({'id': cid})
         self.assertEqual(result.get_json()['response'], 'Synthetic reply.')
         self.assertEqual(self.image_list(cid)['jobs'], [])
+
+    def test_manual_queued_during_workflow_validation_overtakes_automatic(self):
+        from unittest.mock import patch
+
+        cid = self.ready_chat()
+        self.fake.unload = lambda: None
+        self.call('PATCH', f'/api/conversations/{cid}/scene-policy',
+                  {'enabled': True, 'cooldown_seconds': 60, 'revision': 1})
+        self.fake.reply = '{"reply":"Synthetic reply.","scene":"A synthetic park"}'
+        self.turn({'id': cid})
+        manual = []
+
+        def add_manual(workflow):
+            if not manual:
+                manual.append(self.enqueue(cid, 'manual')['id'])
+
+        with patch.object(self.renderer, 'validate_workflow', side_effect=add_manual):
+            self.visuals.step()
+        self.assertEqual(self.renderer.submissions, [])
+        self.visuals.step()
+        self.assertEqual(self.renderer.submissions, manual)

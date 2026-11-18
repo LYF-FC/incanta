@@ -108,7 +108,7 @@
       if (actionName === 'retry') return client.submit(cid, job.kind, job.description);
       if (actionName === 'cancel') return api.mutate(endpoint + '/cancel', 'POST', {});
       if (actionName === 'resolve') {
-        if (!root.confirm('Confirm that you checked the dedicated ComfyUI queue and this request is missing.')) return;
+        if (!root.confirm('Confirm you restarted the dedicated ComfyUI renderer and checked that this request is missing.')) return;
         return api.mutate(endpoint + '/resolve', 'POST', {confirm_missing: true});
       }
       return api.mutate(path(cid, 'portrait'), 'POST', {asset_id: job.asset_id, decision: actionName});

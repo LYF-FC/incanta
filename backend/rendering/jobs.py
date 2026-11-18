@@ -362,6 +362,11 @@ class RenderJobs:
                     return
                 if not self._fresh(db, job):
                     raise AppError('render_stale')
+                if self.chat_pending.is_set():
+                    return
+                if job['kind'] == 'automatic' and db.execute(
+                        "SELECT 1 FROM render_jobs WHERE state='queued' AND kind!='automatic' LIMIT 1").fetchone():
+                    return
                 dirty = db.execute('SELECT * FROM render_handoff').fetchone()
                 if dirty and (dirty['renderer_key'] != self.renderer.key or dirty['phase'] != 0):
                     raise AppError('render_handoff')

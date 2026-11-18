@@ -56,7 +56,7 @@ Rendering functionality is not face consistency or M2 compatibility evidence.
 
 - [X] T020 Run traversal/type/oversize output, disk failure, stale context, unrelated-job cancellation and renderer-unavailable cases in tests/test_rendering.py and tests/test_render_jobs.py; execute all suites. (FR-003, FR-004, FR-005, FR-007, FR-008, FR-010, SC-002, SC-004)
 - [ ] T021 Run explicit native quickstart.md with approved portrait/three scenes, face-match owner verdict, duration/peak memory and LLM/render handoff in specs/003-local-character-visuals/verification.md; record failure rather than adding unapproved training. (FR-008, FR-009, FR-010, SC-001, SC-005)
-- [ ] T022 Update SETUP.md, ARCHITECTURE.md and docs/ASSETS.md; review workflow/node licenses, stage only safe files and deliver through reviewed PR, recording gates in specs/003-local-character-visuals/verification.md. (FR-001, FR-009, FR-010)
+- [X] T022 Update SETUP.md, ARCHITECTURE.md and docs/ASSETS.md; review workflow/node licenses, stage only safe files and deliver through reviewed PR, recording gates in specs/003-local-character-visuals/verification.md. (FR-001, FR-009, FR-010)
 
 ## Dependencies & Execution Order
 
